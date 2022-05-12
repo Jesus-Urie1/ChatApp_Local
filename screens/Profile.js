@@ -8,6 +8,7 @@ export default function Profile() {
         <Text>Este es el nuevo</Text>
         <Text>Profile</Text>
         <Text>Profile2</Text>
+        <Text>Profile3</Text>
       </View>
     )
 }
