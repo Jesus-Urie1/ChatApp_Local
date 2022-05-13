@@ -6,7 +6,7 @@ import { collection,addDoc } from "@firebase/firestore";
 const backImage = require("../assets/backImage.png");
 
 export default function Signup({navigation}) {
-    
+    const imagenPrincipal = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Antu_insert-image.svg/1200px-Antu_insert-image.svg.png";
     const [nombre, setNombre] = useState("");
     const [telefono, setTelefono] = useState("");
     const [email, setEmail] = useState("");
@@ -25,6 +25,7 @@ export default function Signup({navigation}) {
             Alert.alert("Error", 'Ingresa todos los datos')
         } else {
             const datos = {
+                "imagen": imagenPrincipal,
                 "nombre": nombre,
                 "telefono": telefono,
                 "email": email,
