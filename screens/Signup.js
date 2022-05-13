@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { cloneElement, useState } from "react";
 import { StyleSheet, Text, View, TextInput, SafeAreaView, ImageBackground, TouchableOpacity, Alert } from "react-native";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, database } from "../config/firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { auth, database} from "../config/firebase";
+import { collection,addDoc } from "@firebase/firestore";
 const backImage = require("../assets/backImage.png");
 
 export default function Signup({navigation}) {
@@ -20,21 +20,18 @@ export default function Signup({navigation}) {
         }
     };
 
-    const AddNewUser = () => {
+    const AddNewUser = async () => {
         if(nombre === '' && telefono === '' && email === '' && password === ''){
             Alert.alert("Error", 'Ingresa todos los datos')
         } else {
-            const documento = doc(database, "users", email)
             const datos = {
                 "nombre": nombre,
                 "telefono": telefono,
                 "email": email,
                 "password": password
             }
-            setDoc(documento, datos)
-            .then(() => console.log("Registro Exitoso"))
-            .catch((err) => Alert.alert("Error", err.message));
-        }
+            await addDoc(collection(database, "users"), datos);
+        } 
     }
     
     const Registro = () => {
