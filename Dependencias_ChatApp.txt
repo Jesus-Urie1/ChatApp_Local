@@ -1,0 +1,12 @@
+instalar yarn, expo y nodejs
+*expo install firebase
+*expo install expo-constants dotenv
+*expo install react-native-gesture-handler
+*expo install react-native-screens
+*expo install react-native-safe-area-context
+*expo install react-native-masked-view
+*yarn add @react-navigation/native-stack @react-navigation/native
+*npm install moment --save
+*npm i --save lodash
+*yarn add react-native-image-picker
+*cd ios && pod install //Si se trabaja con ios

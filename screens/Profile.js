@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { Text, StyleSheet, View } from 'react-native'
 import { database } from '../config/firebase'
 import { collection, onSnapshot, orderBy, query } from '@firebase/firestore'
 import PerfilComp from '../components/PerfilComp'
@@ -30,7 +29,6 @@ export default function Profile() {
     },[])
     return (
       <>
-        <Text>Perfil</Text>
         {products.map(product => {
           if(product !== undefined)
           return <PerfilComp key={product.id} {...product}/>
@@ -38,11 +36,3 @@ export default function Profile() {
       </>
     )
 }
-
-const styles = StyleSheet.create({
-  container:{
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-  }
-})
