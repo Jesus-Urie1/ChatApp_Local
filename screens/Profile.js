@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { Text, StyleSheet, View } from 'react-native'
 import { database } from '../config/firebase'
 import { collection, onSnapshot, orderBy, query } from '@firebase/firestore'
 import PerfilComp from '../components/PerfilComp'
+import AuthenticatedUserContext from "../components/context";
 
 export default function Profile() {
+    const {user} = useContext(AuthenticatedUserContext);
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
@@ -13,12 +15,15 @@ export default function Profile() {
 
         const unsubscribe = onSnapshot(q, querySnapshot => {
           setProducts(
-            querySnapshot.docs.map(doc => ({
+            querySnapshot.docs.map(doc => {
+              if (doc.data().email === user.email)
+              return {
                 id: doc.id,
                 nombre: doc.data().nombre,
                 email: doc.data().email,
                 telefono: doc.data().telefono
-            })
+            }
+            } 
             )
           )})
         return unsubscribe;
@@ -26,7 +31,10 @@ export default function Profile() {
     return (
       <>
         <Text>Perfil</Text>
-        {products.map(products => <PerfilComp key={products.id} {...products}/>)}
+        {products.map(product => {
+          if(product !== undefined)
+          return <PerfilComp key={product.id} {...product}/>
+        })}
       </>
     )
 }

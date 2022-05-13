@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, StyleSheet, View, TextInput, TouchableOpacity, SafeAreaView, Alert } from 'react-native'
+import { Text, StyleSheet, View, TextInput, TouchableOpacity, SafeAreaView, Alert, KeyboardAvoidingView} from 'react-native'
 
 export default function NewChat({navigation}) {
     const [code, setcode] = useState("");
@@ -23,23 +23,28 @@ export default function NewChat({navigation}) {
     }
 
     return (
-      <View style={styles.container}>
+        <View style={styles.container}>
             <SafeAreaView style={styles.form}>
-            <Text style={styles.title}>Crear nuevo Chat</Text>
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Chat",{chatcode: cadenaAleatoria(6)})}>
-                <Text style={{fontWeight: 'bold', color: '#fff', fontSize: 18}}>Crear</Text>
-            </TouchableOpacity>
-            <Text style={styles.title}>Entrar a un Chat</Text>
-                <TextInput style={styles.input}
-                    placeholder="Ingresa un codigo"
-                    value={code}
-                    onChangeText={(text) => setcode(text)}
-                    />
-            <TouchableOpacity style={styles.button} onPress={() => SelectChat()}>
-                <Text style={{fontWeight: 'bold', color: '#fff', fontSize: 18}}>Entrar</Text>
-            </TouchableOpacity>
+            <KeyboardAvoidingView
+                behavior= {(Platform.OS === 'ios')? "padding" : null}>
+                <Text style={styles.title}>Crear nuevo Chat</Text>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Chat",{chatcode: cadenaAleatoria(6)})}>
+                    <Text style={{fontWeight: 'bold', color: '#fff', fontSize: 18}}>Crear</Text>
+                </TouchableOpacity>
+                <Text style={styles.title}>Entrar a un Chat</Text>
+                    <TextInput style={styles.input}
+                        placeholder="Ingresa un codigo"
+                        value={code}
+                        onChangeText={(text) => setcode(text)}
+                        />
+                <TouchableOpacity style={styles.button} onPress={() => SelectChat()}>
+                    <Text style={{fontWeight: 'bold', color: '#fff', fontSize: 18}}>Entrar</Text>
+                </TouchableOpacity>
+            </KeyboardAvoidingView>
             </SafeAreaView>
       </View>
+      
+      
     )
 }
 

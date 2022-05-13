@@ -1,5 +1,5 @@
 import React, { cloneElement, useState } from "react";
-import { StyleSheet, Text, View, TextInput, SafeAreaView, ImageBackground, TouchableOpacity, Alert } from "react-native";
+import { StyleSheet, Text, View, TextInput, SafeAreaView, ImageBackground, TouchableOpacity, Alert, KeyboardAvoidingView } from "react-native";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, database} from "../config/firebase";
 import { collection,addDoc } from "@firebase/firestore";
@@ -43,6 +43,9 @@ export default function Signup({navigation}) {
             <ImageBackground source={backImage} style={styles.backImage}/>
             <View style={styles.whiteSheet} />
             <SafeAreaView style={styles.form}>
+            <KeyboardAvoidingView
+                behavior= {(Platform.OS === 'ios')? "padding" : null}
+                keyboardVerticalOffset={-50}>
                 <Text style={styles.title}>Registrate</Text>
                 <TextInput style={styles.input}
                     placeholder="Nombre(s)"
@@ -83,6 +86,7 @@ export default function Signup({navigation}) {
                     <Text style={{color: '#006B76', fontWeight: '600', fontSize: 14}}>Inicia Sesion</Text>
                 </TouchableOpacity>
             </View>
+            </KeyboardAvoidingView>
             </SafeAreaView>
         </View>
     )

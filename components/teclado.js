@@ -1,5 +1,5 @@
 import React,{useState} from "react";
-import {StyleSheet, View,Text,TouchableOpacity,TextInput,Platform,Image} from "react-native";
+import {StyleSheet,View,TouchableOpacity,TextInput,Image,KeyboardAvoidingView} from "react-native";
 
 
 export default function teclado(props){
@@ -15,10 +15,14 @@ export default function teclado(props){
         }
     }
     return(
+        <KeyboardAvoidingView
+        behavior= {(Platform.OS === 'ios')? "padding" : null}
+        keyboardVerticalOffset={70}>
         <View style={styles.containter}>
             <TextInput style={styles.input}
                 placeholder="Enviar mensaje..."
                 placeholderTextColor='grey'
+                keyboardVerticalOffset={32}
                 value={mensaje}
                 onChange={(e) => setMensaje(e.nativeEvent.text)}
             />
@@ -30,6 +34,7 @@ export default function teclado(props){
             </TouchableOpacity>
             
         </View>
+        </KeyboardAvoidingView> 
     )
 }
 

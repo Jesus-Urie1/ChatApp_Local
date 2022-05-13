@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Button, TextInput, Image, SafeAreaView, ImageBackground, TouchableOpacity, StatusBar, Alert } from "react-native";
+import { StyleSheet,Text,View,TextInput,SafeAreaView,ImageBackground,TouchableOpacity,Alert,KeyboardAvoidingView} from "react-native";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../config/firebase";
 import Home from "./Home";
@@ -21,38 +21,41 @@ export default function Login({ navigation }) {
     return (
         <View style={styles.container}>
             <ImageBackground source={backImage} style={styles.backImage}/>
-            <View style={styles.whiteSheet} />
-            <SafeAreaView style={styles.form}>
-                <Text style={styles.title}>Rakuh Chat</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Ingresa Email"
-                    autoCapitalize="none"
-                    keyboardType="email-address"
-                    textContentType="emailAddress"
-                    value={email}
-                    onChangeText={(text) => setEmail(text)}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Ingresa Contraseña"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    secureTextEntry={true}
-                    textContentType="password"
-                    value={password}
-                    onChangeText={(text) => setPassword(text)}
-                />
-            <TouchableOpacity style={styles.button} onPress={onHandleLogin}>
-                <Text style={{fontWeight: 'bold', color: '#fff', fontSize: 18}}>Iniciar Sesion</Text>
-            </TouchableOpacity>
-            <View style={{marginTop: 20, flexDirection: 'row', alignItems: 'center', alignSelf: 'center'}}>
-                <Text style={{color: 'gray', fontWeight: '600', fontSize: 14}}>No tienes cuenta? </Text>
-                <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
-                    <Text style={{color: '#006B76', fontWeight: '600', fontSize: 14}}>Registrate</Text>
-                </TouchableOpacity>
-            </View>
-            </SafeAreaView>
+                <View style={styles.whiteSheet}/>
+                    <SafeAreaView style={styles.form}>
+                        <KeyboardAvoidingView
+                            behavior= {(Platform.OS === 'ios')? "padding" : null}>
+                        <Text style={styles.title}>Rakuh Chat</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Ingresa Email"
+                            autoCapitalize="none"
+                            keyboardType="email-address"
+                            textContentType="emailAddress"
+                            value={email}
+                            onChangeText={(text) => setEmail(text)}
+                        />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Ingresa Contraseña"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                            secureTextEntry={true}
+                            textContentType="password"
+                            value={password}
+                            onChangeText={(text) => setPassword(text)}
+                        />
+                        <TouchableOpacity style={styles.button} onPress={onHandleLogin}>
+                            <Text style={{fontWeight: 'bold', color: '#fff', fontSize: 18}}>Iniciar Sesion</Text>
+                        </TouchableOpacity>
+                        <View style={{marginTop: 20, flexDirection: 'row', alignItems: 'center', alignSelf: 'center'}}>
+                            <Text style={{color: 'gray', fontWeight: '600', fontSize: 14}}>No tienes cuenta? </Text>
+                            <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
+                                <Text style={{color: '#006B76', fontWeight: '600', fontSize: 14}}>Registrate</Text>
+                            </TouchableOpacity>
+                        </View>
+                        </KeyboardAvoidingView>
+                    </SafeAreaView>
         </View>
     )
 }
