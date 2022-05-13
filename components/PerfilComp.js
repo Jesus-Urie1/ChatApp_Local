@@ -19,6 +19,10 @@ export default function PerfilComp({
                 style={styles.input}
                 defaultValue={telefono}
             />
+            <TextInput
+                style={styles.input}
+                
+            />
         </View>
     )
 }
