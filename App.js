@@ -28,7 +28,7 @@ function ChatStack () {
   return (
     <Stack.Navigator defaultScreenOptions={Home}>
       <Stack.Screen name="Home" component={Home} options={{ title:''}}/>
-      <Stack.Screen name="Profile" component={Profile} options={{ title:''}}/>
+      <Stack.Screen name="Profile" component={Profile} options={{ title:'Perfil'}}/>
       <Stack.Screen name="NewChat" component={NewChat} options={{ title:''}}/>
       <Stack.Screen name="Chat" component={Chat} options={{ title:''}}/>
     </Stack.Navigator>
