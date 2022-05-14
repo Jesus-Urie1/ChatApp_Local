@@ -6,7 +6,7 @@ import { collection,addDoc } from "@firebase/firestore";
 const backImage = require("../assets/backImage.png");
 
 export default function Signup({navigation}) {
-    
+    const imagenPrincipal = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Antu_insert-image.svg/1200px-Antu_insert-image.svg.png";
     const [nombre, setNombre] = useState("");
     const [telefono, setTelefono] = useState("");
     const [email, setEmail] = useState("");
@@ -21,10 +21,11 @@ export default function Signup({navigation}) {
     };
 
     const AddNewUser = async () => {
-        if(nombre === '' && telefono === '' && email === '' && password === ''){
+        if(nombre === '' || telefono === '' || email === '' || password === ''){
             Alert.alert("Error", 'Ingresa todos los datos')
         } else {
             const datos = {
+                "imagen": imagenPrincipal,
                 "nombre": nombre,
                 "telefono": telefono,
                 "email": email,
@@ -50,12 +51,14 @@ export default function Signup({navigation}) {
                 <TextInput style={styles.input}
                     placeholder="Nombre(s)"
                     value={nombre}
+                    maxLength={20}
                     onChangeText={(text) => setNombre(text)}
                     />
                 <TextInput style={styles.input}
                     placeholder="Numero de Telefono"
                     value={telefono}
                     keyboardType="numeric"
+                    maxLength={10}
                     onChangeText={(text) => setTelefono(text)}
                     />
                 <TextInput

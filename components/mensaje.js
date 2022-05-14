@@ -24,8 +24,6 @@ export default function mensaje(props){
                 <Text style={styles.msj}>{texto}</Text>
                 <Text style={styles.tiempo}>{tiempo}</Text>
             </View>
-            
-            
         </View>
     )
 }
@@ -42,13 +40,15 @@ const styles = StyleSheet.create({
         maxWidth:"80%",
     },
     msj:{
-        padding:5,
-        paddingBottom:25,
+        padding:10,
+        paddingBottom:30,
         color:"white",
     },
     tiempo:{
         fontSize:10,
         position:"absolute",
-        bottom: 5,
+        bottom: 10,
+        color:"white",
+        marginLeft:"65%",
     },
 })

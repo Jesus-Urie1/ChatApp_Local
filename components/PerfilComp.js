@@ -1,10 +1,9 @@
-import React from "react";
+import React, {useState, useContext}from "react";
 import { View, Text, StyleSheet, Image, KeyboardAvoidingView, TouchableOpacity} from "react-native";
-import { TextInput } from "react-native-gesture-handler";
-import { updateDoc } from "firebase/firestore";
 
 export default function PerfilComp({
     id,
+    imagen,
     email,
     nombre,
     telefono,
@@ -13,17 +12,13 @@ export default function PerfilComp({
         <View style={styles.container}>
             <KeyboardAvoidingView
                 behavior= {(Platform.OS === 'ios')? "padding" : null}>
-                <Image style={styles.foto}
-                    source={require('../assets/foto.jpg')}/>
-                <TextInput style={styles.input}
-                        defaultValue={email}/>
-                <TextInput style={styles.input}
-                        defaultValue={nombre}/>
-                <TextInput style={styles.input}
-                        defaultValue={telefono}/>
-                <TouchableOpacity style={styles.button}>
-                    <Text style={{fontWeight: 'bold', color: '#fff', fontSize: 18}}>Actualizar</Text>
-                </TouchableOpacity>
+                <Image
+                    source={{ uri: imagen}}
+                    style={styles.foto}
+                    />
+                <Text style={styles.text}>{email}</Text>
+                <Text style={styles.text}>{nombre}</Text>
+                <Text style={styles.text}>{telefono}</Text>
             </KeyboardAvoidingView>   
       </View>
     )
@@ -70,5 +65,11 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         marginBottom: 30,
         marginTop: 20
+    },
+    text: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        alignSelf: "center",
+        paddingBottom: 15,
     }
   })

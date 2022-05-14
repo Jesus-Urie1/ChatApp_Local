@@ -11,7 +11,7 @@ export default function Home({navigation}) {
     useEffect(() => {
         navigation.setOptions({
             headerLeft: () => (
-                <TouchableOpacity style={{ marginLeft: 10 }} onPress={onSignOut} >
+                <TouchableOpacity style={{ marginLeft: 15 }} onPress={onSignOut} >
                     <Entyop name="log-out" size={24} style={{color: '#006B76', marginRight: 10}}/>
                 </TouchableOpacity>
             ),
@@ -55,6 +55,5 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         alignItems: 'center',
         justifyContent: 'center',
-        marginRight: 10,
     }
 });

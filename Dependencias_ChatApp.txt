@@ -8,5 +8,5 @@ instalar yarn, expo y nodejs
 *yarn add @react-navigation/native-stack @react-navigation/native
 *npm install moment --save
 *npm i --save lodash
-*yarn add react-native-image-picker
+*expo install expo-image-picker
 *cd ios && pod install //Si se trabaja con ios
