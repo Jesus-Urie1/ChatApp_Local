@@ -1,16 +1,18 @@
 import React,{useState, useEffect, useContext} from "react";
-import {StyleSheet, View,ScrollView} from "react-native";
+import {StyleSheet, View,ScrollView, TouchableOpacity} from "react-native";
 import Teclado from "../components/teclado";
-import ChatHeader from "../components/chatHeader";
 import { map } from "lodash";
 import { db }from "../config/firebase";
 import { ref, push, onValue} from "firebase/database"; 
 import Mensaje from "../components/mensaje";
 import moment from "moment";
 import AuthenticatedUserContext from "../components/context";
+import { useNavigation } from '@react-navigation/native';
+import Entyop from '@expo/vector-icons/Entypo'
 
 export default function Chat(navigation){
-  
+
+  const navigationChat= useNavigation();
   const { user } = useContext(AuthenticatedUserContext);
   const [mensajes,setMensajes] = useState([]);
   const chatname = navigation.route.params.chatcode
@@ -22,6 +24,16 @@ export default function Chat(navigation){
       setMensajes(snapshot.val());
     })
   }, []);
+
+  useEffect(() => {
+    navigationChat.setOptions({
+        headerRight: () => (
+            <TouchableOpacity onPress={() => navigation.navigate("Profile")} style={styles.perfilButton}>
+                <Entyop name="cog" size={24} style={{color: '#006B76'}}/>
+            </TouchableOpacity>
+        ),
+    });
+}, [navigationChat]);
 
   //Props necesarias:
   const chatName = chatname
@@ -39,9 +51,7 @@ export default function Chat(navigation){
 
   return(
     <>
-        
         <View style={styles.msj}>
-        <ChatHeader chatName={chatName}/>
             <ScrollView style={styles.chatView}>
               {
                 map(mensajes, (msj,index) => (
@@ -56,16 +66,16 @@ export default function Chat(navigation){
 }
 
 const styles = StyleSheet.create({
-    msj: {
-        flex: 1,
-        justifyContent: "space-between",
-        marginTop:10,
-        backgroundColor:"#1b2734"
-    },
-    botonLogout: {
-      paddingVertical:5,
-      paddingHorizontal:40,
-      marginTop: 40,
+  msj: {
+    flex: 1,
+    justifyContent: "space-between",
+    marginTop:10,
+    backgroundColor:"#fff"
+  },
+  botonLogout: {
+    paddingVertical:5,
+    paddingHorizontal:40,
+    marginTop: 40,
   }, 
   header:{
     paddingBottom:15 ,
@@ -78,6 +88,13 @@ const styles = StyleSheet.create({
     color: "#ffff",
   },
   chatView:{
-    backgroundColor:"#1b2734"
+    backgroundColor:"#fff"
   },
+  perfilButton: {
+    height: 50,
+    width: 50,
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
 });

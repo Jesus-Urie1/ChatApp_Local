@@ -21,7 +21,7 @@ export default function Signup({navigation}) {
     };
 
     const AddNewUser = async () => {
-        if(nombre === '' && telefono === '' && email === '' && password === ''){
+        if(nombre === '' || telefono === '' || email === '' || password === ''){
             Alert.alert("Error", 'Ingresa todos los datos')
         } else {
             const datos = {
@@ -51,12 +51,14 @@ export default function Signup({navigation}) {
                 <TextInput style={styles.input}
                     placeholder="Nombre(s)"
                     value={nombre}
+                    maxLength={20}
                     onChangeText={(text) => setNombre(text)}
                     />
                 <TextInput style={styles.input}
                     placeholder="Numero de Telefono"
                     value={telefono}
                     keyboardType="numeric"
+                    maxLength={10}
                     onChangeText={(text) => setTelefono(text)}
                     />
                 <TextInput

@@ -1,15 +1,19 @@
 import React, {useState, useContext}from "react";
-import { View, Text, StyleSheet, Image, KeyboardAvoidingView, TouchableOpacity} from "react-native";
+import { View, Text, StyleSheet, Image, KeyboardAvoidingView, TouchableOpacity, SafeAreaView, Alert} from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { doc, updateDoc } from "firebase/firestore";
 import * as ImagePicker from 'expo-image-picker';
 import { database } from "../config/firebase";
+import { useNavigation } from '@react-navigation/native';
 
 export default function PerfilEdit(navigation){
+    const imgprincipal = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Antu_insert-image.svg/1200px-Antu_insert-image.svg.png"
+    const navigationBack = useNavigation();
     const id = navigation.route.params.idpass
     const [nombresend, setNombresend] = useState("");
     const [telefonosend, setTelefonosend] = useState("");
-    const [imagensend, setImagensend] = useState("https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Antu_insert-image.svg/1200px-Antu_insert-image.svg.png");
+    const [imagensend, setImagensend] = useState(imgprincipal);
+
     const showImagePicker = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     
@@ -20,28 +24,39 @@ export default function PerfilEdit(navigation){
     
         const result = await ImagePicker.launchImageLibraryAsync();
     
-        // Explore the result
-        console.log(result);
-    
         if (!result.cancelled) {
           setImagensend(result.uri);
-          console.log(result.uri);
         }
       }
     const actulizar = () => {
-        const docRef = doc(database, "users", id);
-        updateDoc(docRef, {
-            "imagen": imagensend,
-            "nombre": nombresend,
-            "telefono": telefonosend,
-        })
-    }
-    const newPerfil = () => {
-        actulizar();
-        navigation.navigate("Profile")
+        if(nombresend === "" && telefonosend === "" && imagensend === imgprincipal){
+            Alert.alert("Error", "Ingresa datos")
+        }else{
+            if(nombresend !== ""){
+                const docRef = doc(database, "users", id);
+                updateDoc(docRef, {
+                    "nombre": nombresend,
+                })
+            }
+            if(telefonosend !== ""){
+                const docRef = doc(database, "users", id);
+                updateDoc(docRef, {
+                    "telefono": telefonosend,
+                })
+            }
+            if(imagensend !== imgprincipal){
+                const docRef = doc(database, "users", id);
+                updateDoc(docRef, {
+                    "imagen": imagensend,
+                })
+            }
+            navigationBack.goBack();
+        }
+        
     }
     return(
         <View style={styles.container}>
+            <SafeAreaView style={styles.form}>
             <KeyboardAvoidingView
                 behavior= {(Platform.OS === 'ios')? "padding" : null}>
                 <TouchableOpacity onPress={showImagePicker}>
@@ -50,17 +65,22 @@ export default function PerfilEdit(navigation){
                     style={styles.foto}
                     />
                 </TouchableOpacity>
-                
                 <TextInput style={styles.input}
                         placeholder="Nuevo Nombre"
+                        value={nombresend}
+                        maxLength={20}
                         onChangeText={(text) => setNombresend(text)}/>
                 <TextInput style={styles.input}
                         placeholder="Nuevo Telefono"
+                        value={telefonosend}
+                        keyboardType={"number-pad"}
+                        maxLength={10}
                         onChangeText={(text) => setTelefonosend(text)}/>
-                <TouchableOpacity style={styles.button} onPress={newPerfil}>
+                <TouchableOpacity style={styles.button} onPress={actulizar}>
                     <Text style={{fontWeight: 'bold', color: '#fff', fontSize: 18}}>Actualizar</Text>
                 </TouchableOpacity>
-            </KeyboardAvoidingView>   
+            </KeyboardAvoidingView>
+            </SafeAreaView>
       </View>
     )
 }

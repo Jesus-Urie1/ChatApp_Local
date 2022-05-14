@@ -1,6 +1,6 @@
 import React,{useState} from "react";
 import {StyleSheet,View,TouchableOpacity,TextInput,Image,KeyboardAvoidingView} from "react-native";
-
+import Entyop from '@expo/vector-icons/Entypo';
 
 export default function teclado(props){
     const { sendMsj } = props
@@ -19,20 +19,16 @@ export default function teclado(props){
         behavior= {(Platform.OS === 'ios')? "padding" : null}
         keyboardVerticalOffset={70}>
         <View style={styles.containter}>
-            <TextInput style={styles.input}
+            <TextInput
                 placeholder="Enviar mensaje..."
                 placeholderTextColor='grey'
-                keyboardVerticalOffset={32}
+                
                 value={mensaje}
                 onChange={(e) => setMensaje(e.nativeEvent.text)}
             />
-            <TouchableOpacity onPress={enviar}>
-            <Image
-            style={styles.iconSend}
-            source={require('../assets/iconEnv.jpg')}
-            />
+            <TouchableOpacity onPress={enviar} style={styles.iconSend}>
+                <Entyop name="direction" size={20} style={{color:"#fff"}}/>
             </TouchableOpacity>
-            
         </View>
         </KeyboardAvoidingView> 
     )
@@ -40,21 +36,25 @@ export default function teclado(props){
 
 const styles = StyleSheet.create({
     containter:{
-        backgroundColor: "#141d27",
-        paddingBottom: 5,
-        paddingHorizontal: 20,
+        paddingHorizontal: 15,
         flexDirection: "row",
         justifyContent:"space-between",
         borderRadius:50,
         marginBottom:5,
         marginHorizontal:5,
-    },
-    input:{
-        color:'#fff'
+        backgroundColor: "#fff",
+        borderWidth: 2,
+        borderColor: "#006B76",
     },
     iconSend: {
+        color: '#fff',
+        marginBottom: 10,
         marginTop:10,
-        width: 35,
-        height: 35,    
+        width: 30,
+        height: 30,
+        backgroundColor: "#006B76",
+        borderRadius: 25,
+        alignItems: 'center',
+        justifyContent: 'center',  
     }
 })
