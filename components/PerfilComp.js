@@ -14,7 +14,7 @@ export default function PerfilComp({
             <KeyboardAvoidingView
                 behavior= {(Platform.OS === 'ios')? "padding" : null}>
                 <Image style={styles.foto}
-                    source={require('../assets/foto.jpg')}/>
+                    source={require('../assets/koku.jpg')}/>
                 <TextInput style={styles.input}
                         defaultValue={email}/>
                 <TextInput style={styles.input}
