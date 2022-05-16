@@ -22,7 +22,7 @@ export default function teclado(props){
             <TextInput
                 placeholder="Enviar mensaje..."
                 placeholderTextColor='grey'
-                
+                style={styles.teclado}
                 value={mensaje}
                 onChange={(e) => setMensaje(e.nativeEvent.text)}
             />
@@ -56,5 +56,8 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         alignItems: 'center',
         justifyContent: 'center',  
+    },
+    teclado:{
+        flex:1,
     }
 })

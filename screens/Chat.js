@@ -69,7 +69,6 @@ const styles = StyleSheet.create({
   msj: {
     flex: 1,
     justifyContent: "space-between",
-    marginTop:10,
     backgroundColor:"#fff"
   },
   botonLogout: {
@@ -85,7 +84,7 @@ const styles = StyleSheet.create({
   },
   headerText:{
     fontWeight: "bold",
-    color: "#ffff",
+    color: "#fff",
   },
   chatView:{
     backgroundColor:"#fff"
