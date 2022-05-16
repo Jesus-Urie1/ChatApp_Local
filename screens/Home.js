@@ -27,6 +27,10 @@ const DATA = [
     }
 ]
 
+const Separator = () => (
+    <View style={styles.separator} />
+  );
+
 const Item = ({ datosChat }) => (
     <View style={styles.item}>
         <Image
@@ -70,13 +74,13 @@ export default function Home({navigation}) {
                     data={DATA}
                 renderItem={renderItem}
                 keyExtractor={item => item.id}/>
+                <Separator/>
             </SafeAreaView>
 
             <TouchableOpacity onPress={() => navigation.navigate("NewChat")} style={styles.chatButton}>
                 <Entyop name="chat" size={24} style={{color: '#fff'}}/>
             </TouchableOpacity> 
-        </View>
-    );
+        </View>    );
 }
 
 const styles = StyleSheet.create({
@@ -86,6 +90,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
         backgroundColor: "#fff",
         marginTop: StatusBar.currentHeight || 0,
+        backgroundColor: '#FFFFFF',
     },
     chatButton: {
         backgroundColor: "#006B76",
@@ -110,19 +115,21 @@ const styles = StyleSheet.create({
     item: {
         flex: 1,
         flexDirection: 'row',
-        backgroundColor: '#F7F7F7',
+        backgroundColor: '#f8f6f6',
         paddingBottomg: 15,
         paddingTop: 15,
         paddingStart: 3,
-        marginVertical: 2,
+        marginVertical: 1,
         marginHorizontal: 15,
-        borderRadius: 15,
-        paddingLeft: 50,
+        borderRadius: 7,
+        paddingLeft: 5,
         flexWrap: 'wrap',
+        // borderBottomColor: 'black',
+        // borderBottomWidth: 1,
       },
       title: {
         color: '#1e272e',
-        fontSize: 23,
+        fontSize: 20,
         margin: 5,
         alignItems: 'center',
       },
@@ -133,5 +140,11 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         borderRadius: 30,
+        marginBottom: 10,
+      },
+      Separator: {
+        marginVertical: 10,
+        borderBottomColor: 'black',
+        borderBottomWidth: StyleSheet.hairlineWidth,
       },
 });
