@@ -1,4 +1,4 @@
-import React,{useState, useEffect, useContext} from "react";
+import React,{useState, useEffect, useContext, useRef} from "react";
 import {StyleSheet, View,ScrollView, TouchableOpacity} from "react-native";
 import Teclado from "../components/teclado";
 import { map } from "lodash";
@@ -12,10 +12,15 @@ import Entyop from '@expo/vector-icons/Entypo'
 
 export default function Chat(navigation){
 
+  const chatScrollR = useRef();
   const navigationChat= useNavigation();
   const { user } = useContext(AuthenticatedUserContext);
   const [mensajes,setMensajes] = useState([]);
-  const chatname = navigation.route.params.chatcode
+  const chatname = navigation.route.params.chatcode;
+  
+
+  //console.log(chatScrollRef);
+ 
 
   useEffect(() =>{
     const chat =  ref(db,chatname);
@@ -25,6 +30,10 @@ export default function Chat(navigation){
     })
   }, []);
 
+  useEffect(()=>{
+    chatScrollR.current.scrollTo({y: 100000000});
+  },[mensajes]);
+
   useEffect(() => {
     navigationChat.setOptions({
         headerRight: () => (
@@ -32,13 +41,15 @@ export default function Chat(navigation){
                 <Entyop name="cog" size={24} style={{color: '#006B76'}}/>
             </TouchableOpacity>
         ),
+        title: chatname,
+        headerTitleAlign: 'center',
     });
 }, [navigationChat]);
 
   //Props necesarias:
-  const chatName = chatname
   const usuario = user.email
 
+ 
 
   const sendMsj = (msj) => {
     const time = moment().format("hh:mm a");
