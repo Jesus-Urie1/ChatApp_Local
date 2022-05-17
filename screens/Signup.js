@@ -40,14 +40,19 @@ export default function Signup({navigation}) {
         AddNewUser();
     }
     return (
+        
         <View style={styles.container}>
             <ImageBackground source={backImage} style={styles.backImage}/>
             <View style={styles.whiteSheet} />
+            
             <SafeAreaView style={styles.form}>
-            <KeyboardAvoidingView
-                behavior= {(Platform.OS === 'ios')? "padding" : null}
-                keyboardVerticalOffset={-50}>
+            
+            
+            
                 <Text style={styles.title}>Registrate</Text>
+                <KeyboardAvoidingView
+                behavior= {(Platform.OS === 'ios')? "padding" : "height"}
+                keyboardVerticalOffset={-50}>
                 <TextInput style={styles.input}
                     placeholder="Nombre(s)"
                     value={nombre}
@@ -57,7 +62,7 @@ export default function Signup({navigation}) {
                 <TextInput style={styles.input}
                     placeholder="Numero de Telefono"
                     value={telefono}
-                    keyboardType="numeric"
+                    keyboardType='numeric'
                     maxLength={10}
                     onChangeText={(text) => setTelefono(text)}
                     />
@@ -83,15 +88,17 @@ export default function Signup({navigation}) {
             <TouchableOpacity style={styles.button} onPress={() => Registro()}>
                 <Text style={{fontWeight: 'bold', color: '#fff', fontSize: 18}}>Registrate</Text>
             </TouchableOpacity>
+            </KeyboardAvoidingView>
             <View style={{marginTop: 20, flexDirection: 'row', alignItems: 'center', alignSelf: 'center'}}>
                 <Text style={{color: 'gray', fontWeight: '600', fontSize: 14}}>Ya tienes cuenta? </Text>
                 <TouchableOpacity onPress={() => navigation.navigate("Login")}>
                     <Text style={{color: '#006B76', fontWeight: '600', fontSize: 14}}>Inicia Sesion</Text>
                 </TouchableOpacity>
             </View>
-            </KeyboardAvoidingView>
+            
             </SafeAreaView>
         </View>
+        
     )
 }
 

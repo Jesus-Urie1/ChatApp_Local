@@ -22,7 +22,7 @@ export default function teclado(props){
             <TextInput
                 placeholder="Enviar mensaje..."
                 placeholderTextColor='grey'
-                
+                style={styles.teclado}
                 value={mensaje}
                 onChange={(e) => setMensaje(e.nativeEvent.text)}
             />
@@ -37,14 +37,15 @@ export default function teclado(props){
 const styles = StyleSheet.create({
     containter:{
         paddingHorizontal: 15,
+        marginTop:5,
         flexDirection: "row",
         justifyContent:"space-between",
         borderRadius:50,
         marginBottom:5,
         marginHorizontal:5,
         backgroundColor: "#fff",
-        borderWidth: 2,
-        borderColor: "#006B76",
+        borderWidth: 0.2,
+        borderColor: "grey",
     },
     iconSend: {
         color: '#fff',
@@ -56,5 +57,9 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         alignItems: 'center',
         justifyContent: 'center',  
+    },
+    teclado:{
+        flex:1,
+        paddingRight:10,
     }
 })
