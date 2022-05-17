@@ -1,4 +1,4 @@
-import React, { useEffect }from 'react'
+import React, { useEffect,}from 'react'
 import { View, TouchableOpacity, Text, Image, StyleSheet} from "react-native"
 import Entyop from '@expo/vector-icons/Entypo'
 import { signOut } from 'firebase/auth';
@@ -8,6 +8,7 @@ export default function Home({navigation}) {
     const onSignOut = () => {
         signOut(auth).catch(error => console.log(error));
     };
+    
     useEffect(() => {
         navigation.setOptions({
             headerLeft: () => (

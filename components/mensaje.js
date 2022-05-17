@@ -35,20 +35,21 @@ const styles = StyleSheet.create({
     },
     viewMsj:{
         borderRadius: 15,
-        minHeight: 35,
+        minHeight: 25,
         minWidth:"40%",
         maxWidth:"80%",
     },
     msj:{
-        padding:10,
-        paddingBottom:30,
+        paddingHorizontal:10,
+        paddingTop:5,
+        paddingBottom:15,
         color:"white",
     },
     tiempo:{
         fontSize:10,
         position:"absolute",
-        bottom: 10,
-        color:"white",
-        marginLeft:"65%",
+        bottom: 3,
+        color:"#d5d5d5",
+        right:10,
     },
 })
