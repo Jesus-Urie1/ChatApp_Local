@@ -30,10 +30,11 @@ export default function Chat(navigation){
     })
   }, []);
 
-  useEffect(()=>{
+  /*useEffect(()=>{
     chatScrollR.current.scrollTo({y: 100000000});
   },[mensajes]);
 
+  */
   useEffect(() => {
     navigationChat.setOptions({
         headerRight: () => (
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
   msj: {
     flex: 1,
     justifyContent: "space-between",
-    backgroundColor:"#fff"
+    backgroundColor:"#fbf2ea"
   },
   botonLogout: {
     paddingVertical:5,
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   chatView:{
-    backgroundColor:"#fff"
+    backgroundColor:"#fbf2ea"
   },
   perfilButton: {
     height: 50,
