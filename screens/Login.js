@@ -19,6 +19,7 @@ export default function Login({ navigation }) {
     };
 
     return (
+        
         <View style={styles.container}>
             <ImageBackground source={backImage} style={styles.backImage}/>
                 <View style={styles.whiteSheet}/>
