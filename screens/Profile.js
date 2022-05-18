@@ -33,19 +33,23 @@ export default function Profile({navigation}) {
         return unsubscribe;
     },[])
     return (
-      <>
+      <View style={styles.container}>
         {products.map(product => {
           if(product !== undefined)
           return <PerfilComp key={product.id} {...product}/>
         })}
-
           <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("PerfilEdit",{idpass: idpass})}>
             <Text style={{fontWeight: 'bold', color: '#fff', fontSize: 18}}>Editar</Text>
           </TouchableOpacity>
-      </>
+      </View>
     )
 }
 const styles = StyleSheet.create({
+  container:{
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+  },
   button: {
     backgroundColor: '#006B76',
     height: 50,
@@ -55,8 +59,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 100,
-  },
-  container:{
-    backgroundColor: '#fff',
-  },
+  }
 })

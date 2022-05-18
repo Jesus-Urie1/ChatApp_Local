@@ -1,28 +1,48 @@
+import { connectFirestoreEmulator } from "firebase/firestore";
 import React,{useState,useEffect} from "react";
 import {StyleSheet, View,Text} from "react-native";
+import letterColors from "../utils/letterColors";
+
 
 export default function mensaje(props){
-   
     const {
         msj:{
             texto,user,tiempo
         },usuario
     } = props;
-        //si user = usuario es true si no false
-    const msjMio = user === usuario ;
+    
+    const msjMio = user === usuario;
+    const [bgColorLetter, setBgColorLetter] = useState(null);
+   
+    useEffect(() =>{
+        const char = user.trim()[0].toUpperCase();
+        const indexLetter = char.charCodeAt() - 65;
+        setBgColorLetter(letterColors[indexLetter]);
+    })
     const conditionalStyle = {
         container:{
             justifyContent: msjMio ? "flex-end" : "flex-start", 
         },
         viewMsj:{
-            backgroundColor: msjMio ? "#006B76" : "#3b83bd",
+            backgroundColor: msjMio ? '#006B76' : "#fff",
+            borderTopRightRadius: msjMio ? 0 : 20,
+            borderTopLeftRadius: msjMio ? 20: 0,
+        },
+        msj:{
+            color: msjMio ? "#fff" : "#000",
+            textAlign: msjMio ? 'left' : 'left',
         }
     }
     return(
         <View style={[styles.container, conditionalStyle.container]}>
             <View style={[styles.viewMsj, conditionalStyle.viewMsj]}>
-                <Text style={styles.msj}>{texto}</Text>
-                <Text style={styles.tiempo}>{tiempo}</Text>
+            {!msjMio &&(
+                     <Text style={[styles.letter, {color: `rgb(${bgColorLetter})`}]}>
+                        {user}
+                    </Text>
+            )}
+                <Text style={[styles.msj, conditionalStyle.msj]}>{texto}</Text>
+                <Text style={[styles.tiempo, msjMio ? styles.tiempoDerechaMio : styles.tiempoDerecha]}>{tiempo}</Text>
             </View>
         </View>
     )
@@ -30,25 +50,36 @@ export default function mensaje(props){
 const styles = StyleSheet.create({
     container:{
         flexDirection: 'row',
-        margin: 5,
+        margin: 10,
         alignItems: 'center',
     },
     viewMsj:{
-        borderRadius: 15,
-        minHeight: 35,
-        minWidth:"40%",
+        borderBottomEndRadius:20,
+        borderBottomLeftRadius:20,
+        minHeight: 20,
+        minWidth:"30%",
         maxWidth:"80%",
     },
     msj:{
         padding:10,
-        paddingBottom:30,
-        color:"white",
+        paddingBottom:18,
+        textAlign:'lef'
     },
     tiempo:{
         fontSize:10,
         position:"absolute",
-        bottom: 10,
-        color:"white",
-        marginLeft:"65%",
+        bottom: 5,
+        right:10,
     },
+    tiempoDerecha:{
+        color:"#a9a9a9"
+    },
+    tiempoDerechaMio:{
+        color:'#d1d1d1',
+    },
+    letter:{
+        fontSize:12,
+        paddingHorizontal:10,
+        paddingTop:5,
+    }
 })

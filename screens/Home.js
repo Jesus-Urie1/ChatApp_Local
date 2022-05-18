@@ -1,13 +1,32 @@
-import React, { useEffect }from 'react'
+import React, { useEffect, useContext}from 'react'
 import { View, TouchableOpacity, Text, Image, StyleSheet} from "react-native"
 import Entyop from '@expo/vector-icons/Entypo'
 import { signOut } from 'firebase/auth';
 import { auth } from '../config/firebase';
+import AuthenticatedUserContext from "../components/context";
+import { collection, onSnapshot, orderBy, query } from '@firebase/firestore'
+import { database } from '../config/firebase'
 
 export default function Home({navigation}) {
+    const {user} = useContext(AuthenticatedUserContext);
     const onSignOut = () => {
         signOut(auth).catch(error => console.log(error));
     };
+    
+    useEffect(() => {
+        const collectionRef = collection(database, "users");
+        const q = query(collectionRef, orderBy('email', 'desc'));
+
+        const unsubscribe = onSnapshot(q, querySnapshot => {
+            querySnapshot.docs.map(doc => {
+              if (doc.data().email === user.email){
+                user.displayName = doc.data().nombre
+              }
+            })
+          })
+        return unsubscribe;
+    },[])
+    console.log(user.displayName)
     useEffect(() => {
         navigation.setOptions({
             headerLeft: () => (
@@ -22,7 +41,7 @@ export default function Home({navigation}) {
             ),
         });
     }, [navigation]);
-
+    
     return (
         <View style={styles.container}>
             <TouchableOpacity onPress={() => navigation.navigate("NewChat")} style={styles.chatButton}>
