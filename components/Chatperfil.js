@@ -2,16 +2,15 @@ import {Text, StyleSheet, Image} from "react-native";
 
 export default function PerfilComp({
     imagen,
-    email,
-    nombre,
-    telefono,
+    codechat,
+    nombrechat,
 }){
     return(
         <>
             <Image source={{ uri: imagen}} style={styles.foto} />
-            <Text style={styles.text}>{email}</Text>
-            <Text style={styles.text}>{nombre}</Text>
-            <Text style={styles.text}>{telefono}</Text> 
+            <Text style={styles.text}>{"Codigo:"}</Text>
+            <Text style={styles.text}>{codechat}</Text>
+            <Text style={styles.text}>{nombrechat}</Text>
       </>
     )
 }

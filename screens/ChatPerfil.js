@@ -1,32 +1,30 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { database } from '../config/firebase'
 import { collection, onSnapshot, orderBy, query } from '@firebase/firestore'
-import PerfilComp from '../components/PerfilComp'
+import Chatperfil from '../components/Chatperfil'
 import AuthenticatedUserContext from "../components/context";
 import { Text, TouchableOpacity, StyleSheet, View } from "react-native";
+import { useNavigation } from '@react-navigation/native';
 
-export default function Profile({navigation}) {
+export default function ChatPerdil(navigation) {
     const {user} = useContext(AuthenticatedUserContext);
     const [products, setProducts] = useState([]);
     const [idpass, setIdpass] = useState("");
+    const navigationChat = useNavigation();
+    const chatcode = navigation.route.params.chatcode
     useEffect(() => {
-        const collectionRef = collection(database, "users");
-        const q = query(collectionRef, orderBy('email', 'desc'));
+        const collectionRef = collection(database, chatcode);
+        const q = query(collectionRef, orderBy('codeChat', 'desc'));
 
         const unsubscribe = onSnapshot(q, querySnapshot => {
-          setProducts(
-            querySnapshot.docs.map(doc => {
-              if (doc.data().email === user.email){
-                setIdpass(doc.id)
+          setProducts(querySnapshot.docs.map(doc => {
                 return {
-                  id: doc.id,
-                  imagen: doc.data().imagen,
-                  nombre: doc.data().nombre,
-                  email: doc.data().email,
-                  telefono: doc.data().telefono
+                  imagen: doc.data().imagenChat,
+                  nombrechat: doc.data().nombreChat,
+                  codechat: doc.data().codeChat,
                 }
               }
-            })
+            )
           )})
         return unsubscribe;
     },[])
@@ -34,9 +32,9 @@ export default function Profile({navigation}) {
       <View style={styles.container}>
         {products.map(product => {
           if(product !== undefined)
-          return <PerfilComp key={product.id} {...product}/>
+          return <Chatperfil key={product.codechat} {...product}/>
         })}
-          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("PerfilEdit",{idpass: idpass})}>
+          <TouchableOpacity style={styles.button} onPress={() => navigationChat.navigate("PerfilEdit",{idpass: idpass})}>
             <Text style={{fontWeight: 'bold', color: '#fff', fontSize: 18}}>Editar</Text>
           </TouchableOpacity>
       </View>

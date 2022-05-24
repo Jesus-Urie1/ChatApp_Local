@@ -2,29 +2,36 @@ import React,{useState, useEffect, useContext, useRef} from "react";
 import {StyleSheet, View,ScrollView, TouchableOpacity} from "react-native";
 import Teclado from "../components/teclado";
 import { map } from "lodash";
-import { db }from "../config/firebase";
-import { ref, push, onValue} from "firebase/database"; 
 import Mensaje from "../components/mensaje";
 import moment from "moment";
 import AuthenticatedUserContext from "../components/context";
 import { useNavigation } from '@react-navigation/native';
 import Entyop from '@expo/vector-icons/Entypo'
 import { database} from "../config/firebase";
-import { collection, onSnapshot, orderBy, query, addDoc } from '@firebase/firestore'
+import { collection, onSnapshot, orderBy, query, addDoc, doc, setDoc} from '@firebase/firestore'
 
 export default function Chat(navigation){
-
-  var numbermsg 
+  const imagenPrincipal = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Antu_insert-image.svg/1200px-Antu_insert-image.svg.png";
   const chatScrollR = useRef();
   const navigationChat= useNavigation();
   const { user } = useContext(AuthenticatedUserContext);
   const [mensajes,setMensajes] = useState([]);
-  const chatname = navigation.route.params.chatcode;
+  const chatcode = navigation.route.params.chatcode;
+  const [nombreChat, setNombreChat] = useState("Nombre del grupo");
+  const usuario = user.displayName;
+  const iduser = user.uid;
   
+  const documento = doc(database, chatcode, "datosChat")
+    const datosChat = {
+        "codeChat": chatcode,
+        "nombreChat": nombreChat,
+        "imagenChat": imagenPrincipal,
+    }
+  setDoc(documento, datosChat)
 
   useEffect(() => {
-    const collectionRef = collection(database, chatname);
-    const q = query(collectionRef, orderBy('numbermsg', 'asc'));
+    const collectionRef = collection(database, chatcode);
+    const q = query(collectionRef, orderBy('tiempomsj', 'asc'));
 
     const unsubscribe = onSnapshot(q, querySnapshot => {
       setMensajes(
@@ -32,44 +39,47 @@ export default function Chat(navigation){
             return {
               texto: doc.data().texto,
               tiempo: doc.data().tiempo,
-              user: doc.data().usuario,
+              iduser: doc.data().iduser,
+              usuarioname: doc.data().usuarioname,
             }
         } 
         )
       )})
     return unsubscribe;
-},[])
-  useEffect(()=>{
+  },[])
+
+useEffect(()=>{
     chatScrollR.current.scrollTo({y: 100000000});
   },[mensajes]);
 
-  useEffect(() => {
+useEffect(() => {
     navigationChat.setOptions({
+        headerLeft: () => (
+            <TouchableOpacity onPress={() => navigationChat.navigate("Home")} style={styles.perfilButton}>
+                <Entyop name="home" size={24} style={{color: '#006B76'}}/>
+            </TouchableOpacity>
+        ),
         headerRight: () => (
-            <TouchableOpacity onPress={() => navigation.navigate("Profile")} style={styles.perfilButton}>
+            <TouchableOpacity onPress={() => navigationChat.navigate("ChatPerfil",{chatcode: chatcode})} style={styles.perfilButton}>
                 <Entyop name="cog" size={24} style={{color: '#006B76'}}/>
             </TouchableOpacity>
         ),
-        title: chatname,
+        title: nombreChat,
         headerTitleAlign: 'center',
     });
 }, [navigationChat]);
 
-
-  const usuario = user.displayName
-
- 
-
-  const sendMsj = (msj) => {
-    numbermsg = ++numbermsg
+const sendMsj = (msj) => {
     const time = moment().format("hh:mm a");
+    const timemsj = moment().format("hh:mm:ss a");
     const datos = {
       "texto": msj,
       "tiempo": time,
-      "usuario": usuario,
-      "numbermsg": numbermsg
+      "tiempomsj": timemsj,
+      "iduser": iduser,
+      "usuarioname": usuario
     }
-    addDoc(collection(database, chatname), datos);
+    addDoc(collection(database, chatcode), datos);
   }
   
 
@@ -79,7 +89,7 @@ export default function Chat(navigation){
             <ScrollView style={styles.chatView} ref={chatScrollR}>
               {
                 map(mensajes, (msj,index) => (
-                  <Mensaje key={index} msj={msj} usuario={usuario}/>
+                  <Mensaje key={index} msj={msj} id={iduser}/>
                 ))
               }   
             </ScrollView> 

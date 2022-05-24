@@ -1,4 +1,4 @@
-import React, {useState, useContext}from "react";
+import React, {useState}from "react";
 import { View, Text, StyleSheet, Image, KeyboardAvoidingView, TouchableOpacity, SafeAreaView, Alert} from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { doc, updateDoc } from "firebase/firestore";
@@ -32,20 +32,18 @@ export default function PerfilEdit(navigation){
         if(nombresend === "" && telefonosend === "" && imagensend === imgprincipal){
             Alert.alert("Error", "Ingresa datos")
         }else{
+            const docRef = doc(database, "users", id);
             if(nombresend !== ""){
-                const docRef = doc(database, "users", id);
                 updateDoc(docRef, {
                     "nombre": nombresend,
                 })
             }
             if(telefonosend !== ""){
-                const docRef = doc(database, "users", id);
                 updateDoc(docRef, {
                     "telefono": telefonosend,
                 })
             }
             if(imagensend !== imgprincipal){
-                const docRef = doc(database, "users", id);
                 updateDoc(docRef, {
                     "imagen": imagensend,
                 })

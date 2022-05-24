@@ -1,4 +1,3 @@
-import { connectFirestoreEmulator } from "firebase/firestore";
 import React,{useState,useEffect} from "react";
 import {StyleSheet, View,Text} from "react-native";
 import letterColors from "../utils/letterColors";
@@ -7,15 +6,16 @@ import letterColors from "../utils/letterColors";
 export default function mensaje(props){
     const {
         msj:{
-            texto,user,tiempo
-        },usuario
+            texto,iduser,tiempo,usuarioname
+        },id
     } = props;
     
-    const msjMio = user === usuario;
+    const msjMio = iduser === id;
+    
     const [bgColorLetter, setBgColorLetter] = useState(null);
    
     useEffect(() =>{
-        const char = user.trim()[0].toUpperCase();
+        const char = usuarioname.trim()[0].toUpperCase();
         const indexLetter = char.charCodeAt() - 65;
         setBgColorLetter(letterColors[indexLetter]);
     })
@@ -38,7 +38,7 @@ export default function mensaje(props){
             <View style={[styles.viewMsj, conditionalStyle.viewMsj]}>
             {!msjMio &&(
                      <Text style={[styles.letter, {color: `rgb(${bgColorLetter})`}]}>
-                        {user}
+                        {usuarioname}
                     </Text>
             )}
                 <Text style={[styles.msj, conditionalStyle.msj]}>{texto}</Text>
