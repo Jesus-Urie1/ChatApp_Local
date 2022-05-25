@@ -19,7 +19,6 @@ export default function Chat(navigation){
   const chatname = navigation.route.params.chatcode;
   
 
-  //console.log(chatScrollRef);
  
 
   useEffect(() =>{
@@ -30,11 +29,11 @@ export default function Chat(navigation){
     })
   }, []);
 
-  /*useEffect(()=>{
+  useEffect(()=>{
     chatScrollR.current.scrollTo({y: 100000000});
   },[mensajes]);
 
-  */
+  
   useEffect(() => {
     navigationChat.setOptions({
         headerRight: () => (
@@ -64,7 +63,7 @@ export default function Chat(navigation){
   return(
     <>
         <View style={styles.msj}>
-            <ScrollView style={styles.chatView}>
+            <ScrollView style={styles.chatView} ref={chatScrollR}>
               {
                 map(mensajes, (msj,index) => (
                   <Mensaje key={index} msj={msj} usuario={usuario}/>
