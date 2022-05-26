@@ -12,7 +12,6 @@ export default function Profile({navigation}) {
     useEffect(() => {
         const collectionRef = collection(database, "users");
         const q = query(collectionRef, orderBy('email', 'desc'));
-
         const unsubscribe = onSnapshot(q, querySnapshot => {
           setProducts(
             querySnapshot.docs.map(doc => {

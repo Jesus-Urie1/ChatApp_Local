@@ -8,31 +8,29 @@ import AuthenticatedUserContext from "../components/context";
 import { useNavigation } from '@react-navigation/native';
 import Entyop from '@expo/vector-icons/Entypo'
 import { database} from "../config/firebase";
-import { collection, onSnapshot, orderBy, query, addDoc, doc, setDoc} from '@firebase/firestore'
+import { collection, onSnapshot, orderBy, query, addDoc} from '@firebase/firestore'
 
 export default function Chat(navigation){
-  const imagenPrincipal = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Antu_insert-image.svg/1200px-Antu_insert-image.svg.png";
   const chatScrollR = useRef();
   const navigationChat= useNavigation();
   const { user } = useContext(AuthenticatedUserContext);
   const [mensajes,setMensajes] = useState([]);
   const chatcode = navigation.route.params.chatcode;
-  const [nombreChat, setNombreChat] = useState("Nombre del grupo");
+  const [nombreChat, setNombreChat] = useState();
   const usuario = user.displayName;
   const iduser = user.uid;
   
-  const documento = doc(database, chatcode, "datosChat")
-    const datosChat = {
-        "codeChat": chatcode,
-        "nombreChat": nombreChat,
-        "imagenChat": imagenPrincipal,
-    }
-  setDoc(documento, datosChat)
-
+  const title = () => {
+    navigationChat.setOptions({
+      title: nombreChat,
+      headerTitleAlign: 'center',
+    });
+  }
+  title();
   useEffect(() => {
     const collectionRef = collection(database, chatcode);
     const q = query(collectionRef, orderBy('tiempomsj', 'asc'));
-
+    
     const unsubscribe = onSnapshot(q, querySnapshot => {
       setMensajes(
         querySnapshot.docs.map(doc => {
@@ -42,15 +40,27 @@ export default function Chat(navigation){
               iduser: doc.data().iduser,
               usuarioname: doc.data().usuarioname,
             }
-        } 
-        )
+        })
       )})
+    
     return unsubscribe;
   },[])
 
 useEffect(()=>{
     chatScrollR.current.scrollTo({y: 100000000});
   },[mensajes]);
+
+useEffect(()=>{
+  const collectionRef = collection(database, chatcode);
+    const qname = query(collectionRef, orderBy('codeChat', 'desc'));
+    const nameChat = onSnapshot(qname, querySnapshot => {
+      querySnapshot.docs.map(doc => {
+        setNombreChat(doc.data().nombreChat)
+          }
+        )
+      })
+  return nameChat;
+},[])
 
 useEffect(() => {
     navigationChat.setOptions({
@@ -63,9 +73,7 @@ useEffect(() => {
             <TouchableOpacity onPress={() => navigationChat.navigate("ChatPerfil",{chatcode: chatcode})} style={styles.perfilButton}>
                 <Entyop name="cog" size={24} style={{color: '#006B76'}}/>
             </TouchableOpacity>
-        ),
-        title: nombreChat,
-        headerTitleAlign: 'center',
+        )
     });
 }, [navigationChat]);
 
@@ -82,7 +90,6 @@ const sendMsj = (msj) => {
     addDoc(collection(database, chatcode), datos);
   }
   
-
   return(
     <>
         <View style={styles.msj}>

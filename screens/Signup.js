@@ -11,11 +11,16 @@ export default function Signup({navigation}) {
     const [telefono, setTelefono] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    let Uid = "";
 
     const onHandleSignup = () => {
         if (email !== "" && password !== ""){
             createUserWithEmailAndPassword(auth, email, password)
-                .then(() => console.log("Signup success"))
+                .then((credenciales) => {
+                        Uid = credenciales.user.uid
+                        console.log("-----",credenciales.user.uid,"------")
+                        console.log(Uid)
+                })  
                 .catch((err) => Alert.alert("Login error", err.message));
         }
     };
@@ -25,11 +30,11 @@ export default function Signup({navigation}) {
             Alert.alert("Error", 'Ingresa todos los datos')
         } else {
             const datos = {
+                "uid": Uid,
                 "imagen": imagenPrincipal,
                 "nombre": nombre,
                 "telefono": telefono,
                 "email": email,
-                "password": password
             }
             await addDoc(collection(database, "users"), datos);
         } 

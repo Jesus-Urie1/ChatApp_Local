@@ -12,6 +12,7 @@ import NewChat from "./screens/NewChat";
 import Profile from "./screens/Profile";
 import PerfilEdit from "./screens/PerfilEdit";
 import ChatPerfil from "./screens/ChatPerfil";
+import ChatPerfilEdit from "./screens/ChatPerfilEdit";
 import { auth } from "./config/firebase";
 import AuthenticatedUserContext from "./components/context";
 
@@ -33,8 +34,9 @@ function ChatStack () {
       <Stack.Screen name="Profile" component={Profile} options={{ title:'Perfil'}}/>
       <Stack.Screen name="PerfilEdit" component={PerfilEdit} options={{ title:'Editar Perfil'}}/>
       <Stack.Screen name="NewChat" component={NewChat} options={{ title:''}}/>
-      <Stack.Screen name="Chat" component={Chat} options={{ title:''}}/>
+      <Stack.Screen name="Chat" component={Chat}/>
       <Stack.Screen name="ChatPerfil" component={ChatPerfil} options={{ title:'Perfil Chat'}}/>
+      <Stack.Screen name="ChatPerfilEdit" component={ChatPerfilEdit} options={{ title:'Editar Chat'}}/>
     </Stack.Navigator>
   )
 }

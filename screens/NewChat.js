@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Text, StyleSheet, View, TextInput, TouchableOpacity, SafeAreaView, Alert, KeyboardAvoidingView} from 'react-native'
+import { database } from "../config/firebase";
+import { doc, setDoc, collection, onSnapshot, orderBy, query } from '@firebase/firestore'
 
 export default function NewChat({navigation}) {
     const [code, setcode] = useState("");
-
+    const imagenPrincipal = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Antu_insert-image.svg/1200px-Antu_insert-image.svg.png";
     const cadenaAleatoria = longitud => {
         const banco = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         let aleatoria = "";
@@ -13,12 +15,37 @@ export default function NewChat({navigation}) {
         return aleatoria;
         
     };
+    const chatcode = cadenaAleatoria(6);
+
+    const CreateChat = () => {
+        const documento = doc(database, chatcode, "datosChat")
+        const datosChat = {
+            "codeChat": chatcode,
+            "nombreChat": "nombre del chat",
+            "imagenChat": imagenPrincipal,
+        }
+        setDoc(documento, datosChat),
+        navigation.navigate("Chat",{chatcode: chatcode})
+    }
 
     const SelectChat = () => {
         if(code === '' ){
             Alert.alert("Error", 'Ingresa un codigo')
-        } else {
-            navigation.navigate("Chat",{chatcode: code})
+        } else{
+        const collectionRef = collection(database, code);
+        const q = query(collectionRef, orderBy('codeChat', 'desc'));
+        
+        onSnapshot(q, querySnapshot => {
+            if(querySnapshot.docs.length === 0){
+                Alert.alert("Error","Ingresa codigo valido")
+            }else{
+                querySnapshot.docs.map(doc => {
+                    if(doc.data().codeChat === code){
+                      navigation.navigate("Chat",{chatcode: code})
+                    }
+                  })
+            }
+          })
         }
     }
 
@@ -28,7 +55,7 @@ export default function NewChat({navigation}) {
             <KeyboardAvoidingView
                 behavior= {(Platform.OS === 'ios')? "padding" : null}>
                 <Text style={styles.title}>Crear nuevo Chat</Text>
-                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Chat",{chatcode: cadenaAleatoria(6)})}>
+                <TouchableOpacity style={styles.button} onPress={() => CreateChat()}>
                     <Text style={{fontWeight: 'bold', color: '#fff', fontSize: 18}}>Crear</Text>
                 </TouchableOpacity>
                 <Text style={styles.title}>Entrar a un Chat</Text>

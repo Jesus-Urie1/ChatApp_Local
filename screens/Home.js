@@ -26,7 +26,6 @@ export default function Home({navigation}) {
           })
         return unsubscribe;
     },[])
-    console.log(user.displayName)
     useEffect(() => {
         navigation.setOptions({
             headerLeft: () => (
