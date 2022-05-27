@@ -1,8 +1,6 @@
-import React, { cloneElement, useState } from "react";
+import React, { useState, useContext } from "react";
 import { StyleSheet, Text, View, TextInput, SafeAreaView, ImageBackground, TouchableOpacity, Alert, KeyboardAvoidingView } from "react-native";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, database} from "../config/firebase";
-import { collection,addDoc } from "@firebase/firestore";
+import AuthContext from "../hooks/authContext";
 const backImage = require("../assets/backImage.png");
 
 export default function Signup({navigation}) {
@@ -12,96 +10,78 @@ export default function Signup({navigation}) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const onHandleSignup = () => {
-        if (email !== "" && password !== ""){
-            createUserWithEmailAndPassword(auth, email, password)
-                .then(() => console.log("Signup success"))
-                .catch((err) => Alert.alert("Login error", err.message));
-        }
-    };
+    const {signup} = useContext(AuthContext);
 
-    const AddNewUser = async () => {
+    const Registro = () => {
         if(nombre === '' || telefono === '' || email === '' || password === ''){
             Alert.alert("Error", 'Ingresa todos los datos')
-        } else {
-            const datos = {
-                "imagen": imagenPrincipal,
-                "nombre": nombre,
-                "telefono": telefono,
-                "email": email,
-                "password": password
-            }
-            await addDoc(collection(database, "users"), datos);
-        } 
-    }
-    
-    const Registro = () => {
-        onHandleSignup();
-        AddNewUser();
+        }else {
+            signup(
+                navigation,
+                nombre,
+                telefono,
+                email,
+                password,
+                imagenPrincipal
+            )
+        }
     }
     return (
-        
         <View style={styles.container}>
             <ImageBackground source={backImage} style={styles.backImage}/>
             <View style={styles.whiteSheet} />
             
             <SafeAreaView style={styles.form}>
-            
-            
-            
                 <Text style={styles.title}>Registrate</Text>
                 <KeyboardAvoidingView
                 behavior= {(Platform.OS === 'ios')? "padding" : "height"}
                 keyboardVerticalOffset={-50}>
-                <TextInput style={styles.input}
-                    placeholder="Nombre(s)"
-                    value={nombre}
-                    maxLength={20}
-                    onChangeText={(text) => setNombre(text)}
+                    <TextInput style={styles.input}
+                        placeholder="Nombre(s)"
+                        value={nombre}
+                        maxLength={20}
+                        onChangeText={(text) => setNombre(text)}
+                        />
+                    <TextInput style={styles.input}
+                        placeholder="Numero de Telefono"
+                        value={telefono}
+                        keyboardType='numeric'
+                        maxLength={10}
+                        onChangeText={(text) => setTelefono(text)}
+                        />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Email"
+                        autoCapitalize="none"
+                        keyboardType="email-address"
+                        textContentType="emailAddress"
+                        value={email}
+                        onChangeText={(text) => setEmail(text)}
                     />
-                <TextInput style={styles.input}
-                    placeholder="Numero de Telefono"
-                    value={telefono}
-                    keyboardType='numeric'
-                    maxLength={10}
-                    onChangeText={(text) => setTelefono(text)}
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Contraseña"
+                        autoCapitalize="none"
+                        autoCorrect={false} 
+                        secureTextEntry={true}
+                        textContentType="password"
+                        value={password}
+                        onChangeText={(text) => setPassword(text)}
                     />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Email"
-                    autoCapitalize="none"
-                    keyboardType="email-address"
-                    textContentType="emailAddress"
-                    value={email}
-                    onChangeText={(text) => setEmail(text)}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Contraseña"
-                    autoCapitalize="none"
-                    autoCorrect={false} 
-                    secureTextEntry={true}
-                    textContentType="password"
-                    value={password}
-                    onChangeText={(text) => setPassword(text)}
-                />
-            <TouchableOpacity style={styles.button} onPress={() => Registro()}>
-                <Text style={{fontWeight: 'bold', color: '#fff', fontSize: 18}}>Registrate</Text>
-            </TouchableOpacity>
-            </KeyboardAvoidingView>
-            <View style={{marginTop: 20, flexDirection: 'row', alignItems: 'center', alignSelf: 'center'}}>
-                <Text style={{color: 'gray', fontWeight: '600', fontSize: 14}}>Ya tienes cuenta? </Text>
-                <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-                    <Text style={{color: '#006B76', fontWeight: '600', fontSize: 14}}>Inicia Sesion</Text>
-                </TouchableOpacity>
-            </View>
-            
+                    <TouchableOpacity style={styles.button} onPress={() => Registro()}>
+                        <Text style={{fontWeight: 'bold', color: '#fff', fontSize: 18}}>Registrate</Text>
+                    </TouchableOpacity>
+                </KeyboardAvoidingView>
+                <View style={{marginTop: 20, flexDirection: 'row', alignItems: 'center', alignSelf: 'center'}}>
+                    <Text style={{color: 'gray', fontWeight: '600', fontSize: 14}}>Ya tienes cuenta? </Text>
+                    <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                        <Text style={{color: '#006B76', fontWeight: '600', fontSize: 14}}>Inicia Sesion</Text>
+                    </TouchableOpacity>
+                </View>
             </SafeAreaView>
         </View>
-        
     )
 }
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,

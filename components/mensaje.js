@@ -1,20 +1,27 @@
 import React,{useState,useEffect} from "react";
 import {StyleSheet, View,Text} from "react-native";
+import { auth,database } from "../config/firebase";
 import letterColors from "../utils/letterColors";
+import { getAuth, } from "firebase/auth";
+import getUser from "firebase/auth";
+import { collection, onSnapshot, orderBy, query,doc,where } from '@firebase/firestore'
 
 
 export default function mensaje(props){
+    //console.log(props);
     const {
         msj:{
-            texto,user,tiempo
+            correo,texto,usuarioname,tiempo,iduser,
         },usuario
     } = props;
+
     
-    const msjMio = user === usuario ;
+    const msjMio = iduser === usuario ;
     const [bgColorLetter, setBgColorLetter] = useState(null);
+    const [Msjuser, setMsjuser] = useState(null)
    
     useEffect(() =>{
-        const char = user.trim()[0].toUpperCase();
+        const char = correo.trim()[0].toUpperCase();
         const indexLetter = char.charCodeAt() - 65;
         setBgColorLetter(letterColors[indexLetter]);
     })
@@ -32,12 +39,28 @@ export default function mensaje(props){
             textAlign: msjMio ? 'left' : 'left',
         }
     }
+    function getUserData(uid) {
+          //console.log("usr",uid);
+        const q = query(collection(database, "users"), where("uid", "==", uid));      
+        onSnapshot(q, (querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                
+                let nombre = doc.data().nombre
+                setMsjuser(nombre)
+            }); 
+        });
+        return(Msjuser);
+    }
+
     return(
         <View style={[styles.container, conditionalStyle.container]}>
             <View style={[styles.viewMsj, conditionalStyle.viewMsj]}>
             {!msjMio &&(
+                    
+
                      <Text style={[styles.letter, {color: `rgb(${bgColorLetter})`}]}>
-                        {user}
+                        {getUserData(iduser)}
+                        
                     </Text>
             )}
                 <Text style={[styles.msj, conditionalStyle.msj]}>{texto}</Text>

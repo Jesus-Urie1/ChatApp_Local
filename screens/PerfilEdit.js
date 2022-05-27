@@ -5,6 +5,9 @@ import { doc, updateDoc } from "firebase/firestore";
 import * as ImagePicker from 'expo-image-picker';
 import { database } from "../config/firebase";
 import { useNavigation } from '@react-navigation/native';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword,updateProfile} from 'firebase/auth';
+import { auth } from "../config/firebase";
+
 
 export default function PerfilEdit(navigation){
     const imgprincipal = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Antu_insert-image.svg/1200px-Antu_insert-image.svg.png"
@@ -36,6 +39,9 @@ export default function PerfilEdit(navigation){
                 const docRef = doc(database, "users", id);
                 updateDoc(docRef, {
                     "nombre": nombresend,
+                });
+                updateProfile(auth.currentUser, {
+                    displayName: nombresend,
                 })
             }
             if(telefonosend !== ""){

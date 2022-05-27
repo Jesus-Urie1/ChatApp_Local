@@ -1,25 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { StyleSheet,Text,View,TextInput,SafeAreaView,ImageBackground,TouchableOpacity,Alert,KeyboardAvoidingView} from "react-native";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../config/firebase";
-import Home from "./Home";
+import AuthContext from "../hooks/authContext";
 const backImage = require("../assets/backImage.png");
 
-export default function Login({ navigation }) {
-    
+export default function Login({ navigation }) {    
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const {login} = useContext(AuthContext);
 
     const onHandleLogin = () => {
         if (email !== "" && password !== ""){
-            signInWithEmailAndPassword(auth, email, password)
-                .then(() => console.log("Signup success"))
-                .catch((err) => Alert.alert("Correo y/o contraseña incorrectos!!"));
+            login(navigation,email,password)
         }
     };
 
     return (
-        
         <View style={styles.container}>
             <ImageBackground source={backImage} style={styles.backImage}/>
                 <View style={styles.whiteSheet}/>

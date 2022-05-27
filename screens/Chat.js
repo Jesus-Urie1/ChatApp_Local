@@ -1,4 +1,4 @@
-import React,{useState, useEffect, useContext, useRef} from "react";
+import React,{useState, useEffect, useRef} from "react";
 import {StyleSheet, View,ScrollView, TouchableOpacity} from "react-native";
 import Teclado from "../components/teclado";
 import { map } from "lodash";
@@ -6,33 +6,53 @@ import { db }from "../config/firebase";
 import { ref, push, onValue} from "firebase/database"; 
 import Mensaje from "../components/mensaje";
 import moment from "moment";
-import AuthenticatedUserContext from "../components/context";
 import { useNavigation } from '@react-navigation/native';
-import Entyop from '@expo/vector-icons/Entypo'
+import Entyop from '@expo/vector-icons/Entypo';
+import { auth, database } from "../config/firebase";
+import { doc, setDoc } from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query, addDoc} from '@firebase/firestore'
 
 export default function Chat(navigation){
 
   const chatScrollR = useRef();
   const navigationChat= useNavigation();
-  const { user } = useContext(AuthenticatedUserContext);
   const [mensajes,setMensajes] = useState([]);
   const chatname = navigation.route.params.chatcode;
-  
+  //Props necesarias:
+  const usuario = auth.currentUser.displayName;
+  const iduser = auth.currentUser.uid;
+  const correo = auth.currentUser.email;
 
- 
+  const documento = doc(database,chatname,"datosChat");
+  const datosChat = {
+    "chatName": chatname,
+    "user": usuario,
+  }
+  setDoc(documento,datosChat)
 
-  useEffect(() =>{
-    const chat =  ref(db,chatname);
-    onValue(chat, (snapshot) => {
-      const data = snapshot.val();
-      setMensajes(snapshot.val());
-    })
-  }, []);
+  useEffect(() => {
+    const collectionRef = collection(database, chatname);
+    const q = query(collectionRef, orderBy('tiempomsj', 'asc'));
+
+    const unsubscribe = onSnapshot(q, querySnapshot => {
+      setMensajes(
+        querySnapshot.docs.map(doc => {
+            return {
+              texto: doc.data().texto,
+              tiempo: doc.data().tiempo,
+              iduser: doc.data().iduser,
+              usuarioname: doc.data().usuarioname,
+              correo: doc.data().correo,
+            }
+        } 
+        )
+      )})
+    return unsubscribe;
+  },[])
 
   useEffect(()=>{
     chatScrollR.current.scrollTo({y: 100000000});
   },[mensajes]);
-
   
   useEffect(() => {
     navigationChat.setOptions({
@@ -46,18 +66,19 @@ export default function Chat(navigation){
     });
 }, [navigationChat]);
 
-  //Props necesarias:
-  const usuario = user.email
-
- 
 
   const sendMsj = (msj) => {
     const time = moment().format("hh:mm a");
-    push(ref(db,chatname),{
-      user: usuario,
-      texto: msj,
-      tiempo: time,
-    });
+    const timemsj = moment().format("hh:mm:ss a");
+    const datos = {
+      "texto": msj,
+      "tiempo": time,
+      "tiempomsj": timemsj,
+      "iduser": iduser,
+      "usuarioname": usuario,
+      "correo":correo
+    }
+    addDoc(collection(database, chatname), datos);
   }
 
   return(
@@ -66,7 +87,7 @@ export default function Chat(navigation){
             <ScrollView style={styles.chatView} ref={chatScrollR}>
               {
                 map(mensajes, (msj,index) => (
-                  <Mensaje key={index} msj={msj} usuario={usuario}/>
+                  <Mensaje key={index} msj={msj} usuario={iduser} />
                 ))
               }   
             </ScrollView> 

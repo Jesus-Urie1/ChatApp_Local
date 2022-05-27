@@ -4,9 +4,10 @@ import { collection, onSnapshot, orderBy, query } from '@firebase/firestore'
 import PerfilComp from '../components/PerfilComp'
 import AuthenticatedUserContext from "../components/context";
 import { Text, TouchableOpacity, StyleSheet, View } from "react-native";
+import { auth } from '../config/firebase';
 
 export default function Profile({navigation}) {
-    const {user} = useContext(AuthenticatedUserContext);
+    const userEmail = auth.currentUser.email;
     const [products, setProducts] = useState([]);
     const [idpass, setIdpass] = useState("");
     useEffect(() => {
@@ -16,7 +17,7 @@ export default function Profile({navigation}) {
         const unsubscribe = onSnapshot(q, querySnapshot => {
           setProducts(
             querySnapshot.docs.map(doc => {
-              if (doc.data().email === user.email){
+              if (doc.data().email === userEmail){
                 setIdpass(doc.id)
                 return {
                   id: doc.id,
@@ -27,9 +28,9 @@ export default function Profile({navigation}) {
                 }
               }
               
-            } 
-            )
-          )})
+            })
+          )
+        })
         return unsubscribe;
     },[])
     return (

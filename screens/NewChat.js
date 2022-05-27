@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { Text, StyleSheet, View, TextInput, TouchableOpacity, SafeAreaView, Alert, KeyboardAvoidingView} from 'react-native'
+import { Text, StyleSheet, View, TextInput, TouchableOpacity, SafeAreaView, Alert, KeyboardAvoidingView} from 'react-native';
+import { auth } from "../config/firebase";
 
 export default function NewChat({navigation}) {
     const [code, setcode] = useState("");
+
 
     const cadenaAleatoria = longitud => {
         const banco = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
