@@ -1,4 +1,4 @@
-import React, { cloneElement, useState } from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, View, TextInput, SafeAreaView, ImageBackground, TouchableOpacity, Alert, KeyboardAvoidingView } from "react-native";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, database} from "../config/firebase";
@@ -11,39 +11,32 @@ export default function Signup({navigation}) {
     const [telefono, setTelefono] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    let Uid = "";
 
     const onHandleSignup = () => {
         if (email !== "" && password !== ""){
             createUserWithEmailAndPassword(auth, email, password)
-                .then((credenciales) => {
-                        Uid = credenciales.user.uid
-                        console.log("-----",credenciales.user.uid,"------")
-                        console.log(Uid)
+                .then(() => {
+                    AddNewUser();
                 })  
                 .catch((err) => Alert.alert("Login error", err.message));
         }
     };
 
-    const AddNewUser = async () => {
+    const AddNewUser = () => {
         if(nombre === '' || telefono === '' || email === '' || password === ''){
             Alert.alert("Error", 'Ingresa todos los datos')
         } else {
             const datos = {
-                "uid": Uid,
+                "uid": "",
                 "imagen": imagenPrincipal,
                 "nombre": nombre,
                 "telefono": telefono,
                 "email": email,
             }
-            await addDoc(collection(database, "users"), datos);
+            addDoc(collection(database, "users"), datos);
         } 
     }
     
-    const Registro = () => {
-        onHandleSignup();
-        AddNewUser();
-    }
     return (
         <View style={styles.container}>
             <ImageBackground source={backImage} style={styles.backImage}/>
@@ -85,7 +78,7 @@ export default function Signup({navigation}) {
                     value={password}
                     onChangeText={(text) => setPassword(text)}
                 />
-            <TouchableOpacity style={styles.button} onPress={() => Registro()}>
+            <TouchableOpacity style={styles.button} onPress={() => onHandleSignup()}>
                 <Text style={{fontWeight: 'bold', color: '#fff', fontSize: 18}}>Registrate</Text>
             </TouchableOpacity>
             <View style={{marginTop: 20, flexDirection: 'row', alignItems: 'center', alignSelf: 'center'}}>

@@ -4,7 +4,7 @@ import Entyop from '@expo/vector-icons/Entypo'
 import { signOut } from 'firebase/auth';
 import { auth } from '../config/firebase';
 import AuthenticatedUserContext from "../components/context";
-import { collection, onSnapshot, orderBy, query } from '@firebase/firestore'
+import { collection, onSnapshot, orderBy, query, doc, updateDoc} from '@firebase/firestore'
 import { database } from '../config/firebase'
 
 export default function Home({navigation}) {
@@ -12,7 +12,22 @@ export default function Home({navigation}) {
     const onSignOut = () => {
         signOut(auth).catch(error => console.log(error));
     };
-    
+
+    useEffect(() => {
+        const collectionRef = collection(database, "users");
+        const q = query(collectionRef, orderBy('email', 'desc'));
+        onSnapshot(q, querySnapshot => {
+            querySnapshot.docs.map(docs => {
+              if (docs.data().email === user.email){
+                const docRef = doc(database, "users", docs.id);
+                updateDoc(docRef, {
+                    "uid": user.uid,
+                })
+              }
+            })
+          })
+    },[])
+
     useEffect(() => {
         const collectionRef = collection(database, "users");
         const q = query(collectionRef, orderBy('email', 'desc'));

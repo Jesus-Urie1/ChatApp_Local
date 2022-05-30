@@ -1,7 +1,8 @@
 import React,{useState,useEffect} from "react";
 import {StyleSheet, View,Text} from "react-native";
 import letterColors from "../utils/letterColors";
-
+import { collection, onSnapshot, query, where } from '@firebase/firestore'
+import { database} from "../config/firebase";
 
 export default function mensaje(props){
     const {
@@ -11,7 +12,7 @@ export default function mensaje(props){
     } = props;
     
     const msjMio = iduser === id;
-    
+    const [Msjuser, setMsjuser] = useState(null)
     const [bgColorLetter, setBgColorLetter] = useState(null);
    
     useEffect(() =>{
@@ -33,12 +34,24 @@ export default function mensaje(props){
             textAlign: msjMio ? 'left' : 'left',
         }
     }
+
+    function getUserData(uid) {
+
+      const q = query(collection(database, "users"), where("uid", "==", uid));      
+      onSnapshot(q, (querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+              let nombre = doc.data().nombre
+              setMsjuser(nombre)
+          }); 
+      });
+      return(Msjuser);
+  }
     return(
         <View style={[styles.container, conditionalStyle.container]}>
             <View style={[styles.viewMsj, conditionalStyle.viewMsj]}>
             {!msjMio &&(
                      <Text style={[styles.letter, {color: `rgb(${bgColorLetter})`}]}>
-                        {usuarioname}
+                        {getUserData(iduser)}
                     </Text>
             )}
                 <Text style={[styles.msj, conditionalStyle.msj]}>{texto}</Text>

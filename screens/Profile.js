@@ -17,6 +17,7 @@ export default function Profile({navigation}) {
             querySnapshot.docs.map(doc => {
               if (doc.data().email === user.email){
                 setIdpass(doc.id)
+                console.log(doc.id)
                 return {
                   id: doc.id,
                   imagen: doc.data().imagen,

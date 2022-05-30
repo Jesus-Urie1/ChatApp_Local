@@ -1,19 +1,21 @@
-import React, {useState}from "react";
+import React, {useState, useContext}from "react";
 import { View, Text, StyleSheet, Image, KeyboardAvoidingView, TouchableOpacity, SafeAreaView, Alert} from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { doc, updateDoc } from "firebase/firestore";
 import * as ImagePicker from 'expo-image-picker';
 import { database } from "../config/firebase";
 import { useNavigation } from '@react-navigation/native';
+import AuthenticatedUserContext from "../components/context";
 
 export default function PerfilEdit(navigation){
     const imgprincipal = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Antu_insert-image.svg/1200px-Antu_insert-image.svg.png"
     const navigationBack = useNavigation();
+    const { user } = useContext(AuthenticatedUserContext);
     const id = navigation.route.params.idpass
     const [nombresend, setNombresend] = useState("");
     const [telefonosend, setTelefonosend] = useState("");
     const [imagensend, setImagensend] = useState(imgprincipal);
-
+    
     const showImagePicker = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     
@@ -28,7 +30,10 @@ export default function PerfilEdit(navigation){
           setImagensend(result.uri);
         }
       }
-    const actulizar = () => {
+
+    
+
+    const actualizar = () => {
         if(nombresend === "" && telefonosend === "" && imagensend === imgprincipal){
             Alert.alert("Error", "Ingresa datos")
         }else{
@@ -74,7 +79,7 @@ export default function PerfilEdit(navigation){
                         keyboardType={"number-pad"}
                         maxLength={10}
                         onChangeText={(text) => setTelefonosend(text)}/>
-                <TouchableOpacity style={styles.button} onPress={actulizar}>
+                <TouchableOpacity style={styles.button} onPress={actualizar}>
                     <Text style={{fontWeight: 'bold', color: '#fff', fontSize: 18}}>Actualizar</Text>
                 </TouchableOpacity>
             </KeyboardAvoidingView>
