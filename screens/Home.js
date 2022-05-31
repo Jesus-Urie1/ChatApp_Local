@@ -6,25 +6,19 @@ import { auth,database } from '../config/firebase';
 import { onSnapshot,doc,query,where,collection,setDoc } from "@firebase/firestore";
 
 export default function Home({navigation}) {
+    //console.log("user: ",auth.currentUser.displayName);
 
-    
-    //console.log("holaa"); 
-    console.log("user: ",auth.currentUser.displayName);
-    if(auth.currentUser.displayName){
-        //console.log("usuario:   --",auth.currentUser.email)
+    useEffect(() => {
         onSnapshot(doc(database, "users", auth.currentUser.email), (docu) => {
-            //console.log("Current data: ", docu.data());
-            let userdata = docu.data();
-            //uid = "asd"
+            let userdata = docu.data(); 
             userdata['uid'] = auth.currentUser.uid;
-            //console.log(userdata);
             setDoc(doc(database,"users",userdata.email),userdata)
             .then(console.log("se ha agregado la uid al usr"))
             .catch((Error)=>console.log(Error))
 
         });
-       
-    }
+    }, []);
+
     const onSignOut = () => {
         signOut(auth).catch(error => console.log(error));
         navigation.navigate("Login")
