@@ -27,6 +27,7 @@ export default function Home({navigation}) {
     }
     const onSignOut = () => {
         signOut(auth).catch(error => console.log(error));
+        navigation.navigate("Login")
     };
     
     useEffect(() => {
