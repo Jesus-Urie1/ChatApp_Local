@@ -6,6 +6,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { database } from "../config/firebase";
 import { useNavigation } from '@react-navigation/native';
 import AuthenticatedUserContext from "../components/context";
+import { getStorage, ref, uploadBytes} from "firebase/storage";
 
 export default function PerfilEdit(navigation){
     const imgprincipal = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Antu_insert-image.svg/1200px-Antu_insert-image.svg.png"
@@ -15,7 +16,18 @@ export default function PerfilEdit(navigation){
     const [nombresend, setNombresend] = useState("");
     const [telefonosend, setTelefonosend] = useState("");
     const [imagensend, setImagensend] = useState(imgprincipal);
-    
+
+
+    const uploadImageAsync = (uri) => {
+      
+      const storage = getStorage()
+      const imagesRef = ref(storage, 'images/prueba.jpg');
+      console.log(imagesRef)
+      uploadBytes(imagesRef, uri).then((snapshot) => {
+        console.log('Uploaded a blob or file!');
+      });
+    }
+
     const showImagePicker = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     
@@ -25,13 +37,12 @@ export default function PerfilEdit(navigation){
         }
     
         const result = await ImagePicker.launchImageLibraryAsync();
-    
+        
         if (!result.cancelled) {
           setImagensend(result.uri);
+          uploadImageAsync(result.uri);
         }
       }
-
-    
 
     const actualizar = () => {
         if(nombresend === "" && telefonosend === "" && imagensend === imgprincipal){
