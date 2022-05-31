@@ -8,6 +8,8 @@ import Home from "./screens/Home";
 import NewChat from "./screens/NewChat";
 import Profile from "./screens/Profile";
 import PerfilEdit from "./screens/PerfilEdit";
+import ChatPerfil from "./screens/ChatPerfil";
+import ChatPerfilEdit from "./screens/ChatPerfilEdit";
 import { auth } from "./config/firebase";
 import {AuthContextProvider} from "./hooks/authContext";
 
@@ -32,6 +34,9 @@ const stackNavigatorProps = {
           <Stack.Screen name="PerfilEdit" component={PerfilEdit} />
           <Stack.Screen name="NewChat" component={NewChat} options={{ title:''}} />
           <Stack.Screen name="Chat" component={Chat} options={{ title:''}}/>
+          <Stack.Screen name="ChatPerfil" component={ChatPerfil} options={{ title:'Perfil Chat'}}/>
+          <Stack.Screen name="ChatPerfilEdit" component={ChatPerfilEdit} options={{ title:'Editar Chat'}}/>
+
           
           <Stack.Screen name="Login" component={Login} options={{headerShown:false}}/>
           <Stack.Screen name="Signup" component={Signup} options={{headerShown:false}}/>

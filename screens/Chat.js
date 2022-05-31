@@ -17,21 +17,42 @@ export default function Chat(navigation){
   const chatScrollR = useRef();
   const navigationChat= useNavigation();
   const [mensajes,setMensajes] = useState([]);
-  const chatname = navigation.route.params.chatcode;
+  const chatcode = navigation.route.params.chatcode;
   //Props necesarias:
   const usuario = auth.currentUser.displayName;
   const iduser = auth.currentUser.uid;
   const correo = auth.currentUser.email;
+  const [nombreChat, setNombreChat] = useState();
 
-  const documento = doc(database,chatname,"datosChat");
-  const datosChat = {
+  const title = () => {
+    navigationChat.setOptions({
+      title: nombreChat,
+      headerTitleAlign: 'center',
+    });
+  }
+  title();
+  useEffect(()=>{
+    const collectionRef = collection(database, chatcode);
+      const qname = query(collectionRef, orderBy('codeChat', 'desc'));
+      const nameChat = onSnapshot(qname, querySnapshot => {
+        querySnapshot.docs.map(doc => {
+          setNombreChat(doc.data().nombreChat)
+            }
+          )
+        })
+    return nameChat;
+  },[])
+  //const [nombreChat, setNombreChat] = useState(navigation.currentUser.params.displayName);
+
+  //const documento = doc(database,chatname,"datosChat");
+  /*const datosChat = {
     "chatName": chatname,
     "user": usuario,
   }
-  setDoc(documento,datosChat)
+  setDoc(documento,datosChat)*/
 
   useEffect(() => {
-    const collectionRef = collection(database, chatname);
+    const collectionRef = collection(database, chatcode);
     const q = query(collectionRef, orderBy('tiempomsj', 'asc'));
 
     const unsubscribe = onSnapshot(q, querySnapshot => {
@@ -57,12 +78,11 @@ export default function Chat(navigation){
   useEffect(() => {
     navigationChat.setOptions({
         headerRight: () => (
-            <TouchableOpacity onPress={() => navigation.navigate("Profile")} style={styles.perfilButton}>
-                <Entyop name="cog" size={24} style={{color: '#006B76'}}/>
-            </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigationChat.navigate("ChatPerfil",{chatcode: chatcode})} style={styles.perfilButton}>
+          <Entyop name="cog" size={24} style={{color: '#006B76'}}/>
+      </TouchableOpacity>
         ),
-        title: chatname,
-        headerTitleAlign: 'center',
+
     });
 }, [navigationChat]);
 
@@ -78,7 +98,7 @@ export default function Chat(navigation){
       "usuarioname": usuario,
       "correo":correo
     }
-    addDoc(collection(database, chatname), datos);
+    addDoc(collection(database, chatcode), datos);
   }
 
   return(
