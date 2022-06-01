@@ -1,234 +1,92 @@
-import React from 'react';
-import {
-  ActivityIndicator,
-  Button,
-  Clipboard,
-  Image,
-  Share,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Dimensions,
-  CameraRoll,
-} from 'react-native';
-import { Constants, ImagePicker, Permissions } from 'expo';
-import uuid from 'uuid';
-import * as firebase from 'firebase';
-import Expo from 'expo';
+import React, { useEffect, useContext}from 'react'
+import { View, TouchableOpacity, Text, Image, StyleSheet} from "react-native"
+import Entyop from '@expo/vector-icons/Entypo'
+import { signOut } from 'firebase/auth';
+import { auth } from '../config/firebase';
+import AuthenticatedUserContext from "../components/context";
+import { collection, onSnapshot, orderBy, query, doc, updateDoc} from '@firebase/firestore'
+import { database } from '../config/firebase'
 
-console.disableYellowBox = true;
-
-const url =
-  'https://firebasestorage.googleapis.com/v0/b/blobtest-36ff6.appspot.com/o/Obsidian.jar?alt=media&token=93154b97-8bd9-46e3-a51f-67be47a4628a';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBFU3BoTliLLGnDUOn46jA3yCAp1fyeQf4",
-  authDomain: "myhajj-cloud-book-signin.firebaseapp.com",
-  databaseURL: "https://myhajj-cloud-book-signin.firebaseio.com",
-  projectId: "myhajj-cloud-book-signin",
-  storageBucket: "myhajj-cloud-book-signin.appspot.com",
-  messagingSenderId: "283941379992"  
-};
-
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
-
-export default class App extends React.Component {
-  state = {
-    image: null,
-    uploading: false,
-  };
-  
-  async componentDidMount() {
-    await Permissions.askAsync(Permissions.CAMERA_ROLL);
-    await Permissions.askAsync(Permissions.CAMERA);
-  }
-
-  render() {
-    let { image } = this.state;
-
-    return (
-      <View 
-        ref={ref => (this.screenshotIt = ref)}
-        style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        {image ? null : (
-          <Text
-            style={{
-              fontSize: 20,
-              marginBottom: 20,
-              textAlign: 'center',
-              marginHorizontal: 15,
-            }}>
-            Example: Upload ImagePicker result
-          </Text>
-        )}
-
-        <Button
-          onPress={this._pickImage}
-          title="Pick an image from camera roll"
-        />
-
-        <Button onPress={this._takePhoto} title="Take a photo" />
-
-        <Button onPress={this._takeScreenshot} title="Take a screenshot" />
-
-        {this._maybeRenderImage()}
-        {this._maybeRenderUploadingOverlay()}
-
-        <StatusBar barStyle="default" />
-      </View>
-    );
-  }
-
-  _maybeRenderUploadingOverlay = () => {
-    if (this.state.uploading) {
-      return (
-        <View
-          style={[
-            StyleSheet.absoluteFill,
-            {
-              backgroundColor: 'rgba(0,0,0,0.4)',
-              alignItems: 'center',
-              justifyContent: 'center',
-            },
-          ]}>
-          <ActivityIndicator color="#fff" animating size="large" />
-        </View>
-      );
-    }
-  };
-
-  _maybeRenderImage = () => {
-    let { image } = this.state;
-    if (!image) {
-      return;
-    }
-
-    return (
-      <View
-        style={{
-          marginTop: 30,
-          width: 250,
-          borderRadius: 3,
-          elevation: 2,
-        }}>
-        <View
-          style={{
-            borderTopRightRadius: 3,
-            borderTopLeftRadius: 3,
-            shadowColor: 'rgba(0,0,0,1)',
-            shadowOpacity: 0.2,
-            shadowOffset: { width: 4, height: 4 },
-            shadowRadius: 5,
-            overflow: 'hidden',
-          }}>
-          <Image source={{ uri: image }} style={{ width: 250, height: 250 }} />
-        </View>
-
-        <Text
-          onPress={this._copyToClipboard}
-          onLongPress={this._share}
-          style={{ paddingVertical: 10, paddingHorizontal: 10 }}>
-          {image}
-        </Text>
-      </View>
-    );
-  };
-
-  _share = () => {
-    Share.share({
-      message: this.state.image,
-      title: 'Check out this photo',
-      url: this.state.image,
-    });
-  };
-
-  _copyToClipboard = () => {
-    Clipboard.setString(this.state.image);
-    alert('Copied image URL to clipboard');
-  };
-
-  _takeScreenshot = async () => {
-    console.log("pre..");
-    this.screenshotIt;
-    console.log(this.screenshotIt);
-    console.log("pre.2");
-    let ss = await Expo.takeSnapshotAsync(this.screenshotIt, {
-      format: 'png',
-      quality: 0.6,
-      result: 'file',
-      // width: Dimensions.get('screen').width,
-      // height: Dimensions.get('screen').height,
-      // snapshotContentContainer: true,
-    });
-    console.log("taking a snap");
-    await CameraRoll.saveToCameraRoll(ss, 'photo');
-    this._handleImagePicked(ss);
-  };
-
-  _takePhoto = async () => {
-    let pickerResult = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-    });
-    console.log("taking a photo");
-    this._handleImagePicked(pickerResult);
-  };
-
-  _pickImage = async () => {
-    let pickerResult = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-    });
-    console.log("just picking... ");  
-    this._handleImagePicked(pickerResult);
-  };
-
-  _handleImagePicked = async pickerResult => {
-    try {
-      this.setState({ uploading: true });
-
-      if (!pickerResult.cancelled) {
-        const uploadUrl = await uploadImageAsync(pickerResult.uri);
-        this.setState({ image: uploadUrl });
-      }
-    } catch (e) {
-      console.log(e);
-      alert('Upload failed, sorry :(');
-    } finally {
-      this.setState({ uploading: false });
-    }
-  };
-}
-
-async function uploadImageAsync(uri) {
-  // Why are we using XMLHttpRequest? See:
-  // https://github.com/expo/expo/issues/2402#issuecomment-443726662
-  const blob = await new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.onload = function() {
-      resolve(xhr.response);
+export default function Home({navigation}) {
+    const {user} = useContext(AuthenticatedUserContext);
+    const onSignOut = () => {
+        signOut(auth).catch(error => console.log(error));
     };
-    xhr.onerror = function(e) {
-      console.log(e);
-      reject(new TypeError('Network request failed'));
-    };
-    xhr.responseType = 'blob';
-    xhr.open('GET', uri, true);
-    xhr.send(null);
-  });
 
-  const ref = firebase
-    .storage()
-    .ref()
-    .child(uuid.v4());
-  const snapshot = await ref.put(blob);
+    useEffect(() => {
+        const collectionRef = collection(database, "users");
+        const q = query(collectionRef, orderBy('email', 'desc'));
+        onSnapshot(q, querySnapshot => {
+            querySnapshot.docs.map(docs => {
+              if (docs.data().email === user.email){
+                const docRef = doc(database, "users", docs.id);
+                updateDoc(docRef, {
+                    "uid": user.uid,
+                })
+              }
+            })
+          })
+    },[])
 
-  // We're done with the blob, close and release it
-  blob.close();
+    useEffect(() => {
+        const collectionRef = collection(database, "users");
+        const q = query(collectionRef, orderBy('email', 'desc'));
 
-  return await snapshot.ref.getDownloadURL();
+        const unsubscribe = onSnapshot(q, querySnapshot => {
+            querySnapshot.docs.map(doc => {
+              if (doc.data().email === user.email){
+                user.displayName = doc.data().nombre
+              }
+            })
+          })
+        return unsubscribe;
+    },[])
+    useEffect(() => {
+        navigation.setOptions({
+            headerLeft: () => (
+                <TouchableOpacity style={{ marginLeft: 15 }} onPress={onSignOut} >
+                    <Entyop name="log-out" size={24} style={{color: '#006B76', marginRight: 10}}/>
+                </TouchableOpacity>
+            ),
+            headerRight: () => (
+                <TouchableOpacity onPress={() => navigation.navigate("Profile")} style={styles.perfilButton}>
+                    <Entyop name="user" size={24} style={{color: '#006B76'}}/>
+                </TouchableOpacity>
+            ),
+        });
+    }, [navigation]);
+    
+    return (
+        <View style={styles.container}>
+            <TouchableOpacity onPress={() => navigation.navigate("NewChat")} style={styles.chatButton}>
+                <Entyop name="chat" size={24} style={{color: '#fff'}}/>
+            </TouchableOpacity> 
+        </View>
+    );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
+        backgroundColor: "#fff",
+    },
+    chatButton: {
+        backgroundColor: "#006B76",
+        height: 50,
+        width: 50,
+        borderRadius: 25,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: 20,
+        marginBottom: 50,
+    },
+    perfilButton: {
+        height: 50,
+        width: 50,
+        borderRadius: 25,
+        alignItems: 'center',
+        justifyContent: 'center',
+    }
+});
