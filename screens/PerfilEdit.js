@@ -6,7 +6,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { database } from "../config/firebase";
 import { useNavigation } from '@react-navigation/native';
 import AuthenticatedUserContext from "../components/context";
-import { getStorage, ref, uploadBytes} from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL} from "firebase/storage";
 
 export default function PerfilEdit(navigation){
     const imgprincipal = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Antu_insert-image.svg/1200px-Antu_insert-image.svg.png"
@@ -19,13 +19,28 @@ export default function PerfilEdit(navigation){
 
 
     const uploadImageAsync = (uri) => {
-      
-      const storage = getStorage()
-      const imagesRef = ref(storage, 'images/prueba.jpg');
-      console.log(imagesRef)
-      uploadBytes(imagesRef, uri).then((snapshot) => {
-        console.log('Uploaded a blob or file!');
-      });
+        const blob = new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                resolve(xhr.response);
+            };
+            xhr.onerror = function (e) {
+                console.log(e);
+                reject(new TypeError("Network request failed"));
+            };
+            xhr.responseType = "blob";
+            xhr.open("GET", uri, true);
+            xhr.send(null);
+        });
+        const metadata = {
+            contentType: 'image/jpeg',
+          };
+        console.log(blob,"=> blob")
+        const storage = getStorage()
+        const imagesRef = ref(storage, 'images/prueba2.jpg');
+        uploadBytes(imagesRef, blob, metadata).then((snapshot) => {
+            console.log('Uploaded a blob or file!');
+        });
     }
 
     const showImagePicker = async () => {
@@ -39,6 +54,7 @@ export default function PerfilEdit(navigation){
         const result = await ImagePicker.launchImageLibraryAsync();
         
         if (!result.cancelled) {
+            console.log(result.uri,"=> uri")
           setImagensend(result.uri);
           uploadImageAsync(result.uri);
         }
@@ -60,9 +76,25 @@ export default function PerfilEdit(navigation){
                 })
             }
             if(imagensend !== imgprincipal){
-                updateDoc(docRef, {
-                    "imagen": imagensend,
+                const storage = getStorage();
+                getDownloadURL(ref(storage, 'images/prueba2.jpg'))
+                .then((url) => {
+                    const xhr = new XMLHttpRequest();
+                    xhr.responseType = 'blob';
+                    xhr.onload = (event) => {
+                    const blob = xhr.response;
+                    };
+                    xhr.open('GET', url);
+                    xhr.send();
+                    console.log(url)
+                    updateDoc(docRef, {
+                        "imagen": imagensend,
+                    })
                 })
+                .catch((error) => {
+                    // Handle any errors
+                });
+                
             }
             navigationBack.goBack();
         }
