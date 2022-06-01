@@ -10,3 +10,4 @@ instalar yarn, expo y nodejs
 *npm i --save lodash
 *expo install expo-image-picker
 *cd ios && pod install //Si se trabaja con ios
+npm install @react-native-firebase/app
