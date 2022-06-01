@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet,Text,View,TextInput,SafeAreaView,ImageBackground,TouchableOpacity,Alert,KeyboardAvoidingView} from "react-native";
+import { Image, StyleSheet,Text,View,TextInput,SafeAreaView,ImageBackground,TouchableOpacity,Alert,KeyboardAvoidingView} from "react-native";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../config/firebase";
 import Home from "./Home";
@@ -25,7 +25,7 @@ export default function Login({ navigation }) {
                     <SafeAreaView style={styles.form}>
                         <KeyboardAvoidingView
                             behavior= {(Platform.OS === 'ios')? "padding" : null}>
-                        <Text style={styles.title}>Rakuh Chat</Text>
+                        <Image source={require("../assets/logo.png")} style={styles.foto} />
                         <TextInput
                             style={styles.input}
                             placeholder="Ingresa Email"
@@ -107,6 +107,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 40,
+    },
+    foto: {
+        height: 150,
+        width: 220,
+        marginBottom: 20,
+        marginTop: 50,
+        alignSelf: "center",
     },
 });
     
