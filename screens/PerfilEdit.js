@@ -18,28 +18,25 @@ export default function PerfilEdit(navigation){
     const [imagensend, setImagensend] = useState(imgprincipal);
 
 
-    const uploadImageAsync = (uri) => {
-        const blob = new Promise((resolve, reject) => {
+    async function uploadImageAsync(uri){
+        const blob = await new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
-            xhr.onload = function () {
-                resolve(xhr.response);
+            xhr.onload = function() {
+              resolve(xhr.response);
             };
-            xhr.onerror = function (e) {
-                console.log(e);
-                reject(new TypeError("Network request failed"));
+            xhr.onerror = function(e) {
+              console.log(e);
+              reject(new TypeError('Network request failed'));
             };
-            xhr.responseType = "blob";
-            xhr.open("GET", uri, true);
+            xhr.responseType = 'blob';
+            xhr.open('GET', uri, true);
             xhr.send(null);
-        });
-        const metadata = {
-            contentType: 'image/jpeg',
-          };
-        console.log(blob,"=> blob")
+          });
         const storage = getStorage()
-        const imagesRef = ref(storage, 'images/prueba2.jpg');
-        uploadBytes(imagesRef, blob, metadata).then((snapshot) => {
-            console.log('Uploaded a blob or file!');
+        const imagesRef = ref(storage, 'imagesUsers/'+user.uid);
+        uploadBytes(imagesRef, blob).then((snapshot) => {
+            Alert.alert("Listo", "Imagen Subida Correctamente!")
+            console.log('Imagen Subida Correctamente!');
         });
     }
 
@@ -54,7 +51,6 @@ export default function PerfilEdit(navigation){
         const result = await ImagePicker.launchImageLibraryAsync();
         
         if (!result.cancelled) {
-            console.log(result.uri,"=> uri")
           setImagensend(result.uri);
           uploadImageAsync(result.uri);
         }
@@ -77,7 +73,7 @@ export default function PerfilEdit(navigation){
             }
             if(imagensend !== imgprincipal){
                 const storage = getStorage();
-                getDownloadURL(ref(storage, 'images/prueba2.jpg'))
+                getDownloadURL(ref(storage, 'imagesUsers/'+user.uid))
                 .then((url) => {
                     const xhr = new XMLHttpRequest();
                     xhr.responseType = 'blob';
@@ -86,9 +82,8 @@ export default function PerfilEdit(navigation){
                     };
                     xhr.open('GET', url);
                     xhr.send();
-                    console.log(url)
                     updateDoc(docRef, {
-                        "imagen": imagensend,
+                        "imagen": url,
                     })
                 })
                 .catch((error) => {

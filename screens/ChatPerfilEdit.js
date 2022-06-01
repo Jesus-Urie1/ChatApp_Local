@@ -1,10 +1,11 @@
 import React, {useState}from "react";
-import { View, Text, StyleSheet, Image, KeyboardAvoidingView, TouchableOpacity, SafeAreaView, Alert} from "react-native";
+import { View, Text, StyleSheet, Image, KeyboardAvoidingView, TouchableOpacity, SafeAreaView, Alert, ActivityIndicator} from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { doc, updateDoc } from "firebase/firestore";
 import * as ImagePicker from 'expo-image-picker';
 import { database } from "../config/firebase";
 import { useNavigation } from '@react-navigation/native';
+import { getStorage, ref, uploadBytes, getDownloadURL} from "firebase/storage";
 
 export default function ChatPerfilEdit(navigation){
     const imgprincipal = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Antu_insert-image.svg/1200px-Antu_insert-image.svg.png"
@@ -12,6 +13,28 @@ export default function ChatPerfilEdit(navigation){
     const chatcode = navigation.route.params.codechat;
     const [nombresend, setNombresend] = useState("");
     const [imagensend, setImagensend] = useState(imgprincipal);
+
+    async function uploadImageAsync(uri){
+        const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function() {
+              resolve(xhr.response);
+            };
+            xhr.onerror = function(e) {
+              console.log(e);
+              reject(new TypeError('Network request failed'));
+            };
+            xhr.responseType = 'blob';
+            xhr.open('GET', uri, true);
+            xhr.send(null);
+          });
+        const storage = getStorage()
+        const imagesRef = ref(storage, 'imagesChats/'+chatcode);
+        uploadBytes(imagesRef, blob).then((snapshot) => {
+            Alert.alert("Listo", "Imagen Subida Correctamente!")
+            console.log('Imagen Subida Correctamente!');
+        });
+    }
 
     const showImagePicker = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -25,6 +48,7 @@ export default function ChatPerfilEdit(navigation){
     
         if (!result.cancelled) {
           setImagensend(result.uri);
+          uploadImageAsync(result.uri);
         }
       }
     const actulizar = () => {
@@ -38,9 +62,22 @@ export default function ChatPerfilEdit(navigation){
                 })
             }
             if(imagensend !== imgprincipal){
-                updateDoc(docRef, {
-                    "imagenChat": imagensend,
+                const storage = getStorage();
+                getDownloadURL(ref(storage, 'imagesChats/'+chatcode))
+                .then((url) => {
+                    const xhr = new XMLHttpRequest();
+                    xhr.responseType = 'blob';
+                    xhr.onload = (event) => {
+                    const blob = xhr.response;
+                    };
+                    xhr.open('GET', url);
+                    xhr.send();
+                    updateDoc(docRef, {
+                        "imagenChat": url,
+                    })
                 })
+                .catch((error) => {
+                });
             }
             navigationBack.goBack();
         }
