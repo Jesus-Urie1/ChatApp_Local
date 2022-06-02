@@ -4,13 +4,17 @@ export default function PerfilComp({
     imagen,
     codechat,
     nombrechat,
+    usersChat
 }){
+    console.log(usersChat,"plss")
     return(
         <>
             <Image source={{ uri: imagen}} style={styles.foto} />
-            <Text style={styles.text}>{"Codigo:"}</Text>
-            <Text style={styles.text}>{codechat}</Text>
+            <Text style={styles.text}>{"Codigo: "}{codechat}</Text>
+            <Text style={styles.text}>{"Nombre del chat: "}</Text>
             <Text style={styles.text}>{nombrechat}</Text>
+            <Text style={styles.text}>{usersChat.length}{" Participantes "}</Text>
+            
       </>
     )
 }

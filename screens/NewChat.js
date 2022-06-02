@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Text, StyleSheet, View, TextInput, TouchableOpacity, SafeAreaView, Alert, KeyboardAvoidingView} from 'react-native';
 import { auth } from "../config/firebase";
-import { doc, setDoc, collection, onSnapshot, orderBy, query } from '@firebase/firestore';
+import { doc, setDoc, collection, onSnapshot, orderBy, query,addDoc,updateDoc } from '@firebase/firestore';
 import { database } from "../config/firebase";
 
 export default function NewChat({navigation}) {
@@ -26,8 +26,14 @@ export default function NewChat({navigation}) {
             "imagenChat": imagenPrincipal,
             "owner": auth.currentUser.uid,
         }
-        setDoc(documento, datosChat),
+        //creamos el chat
+        setDoc(documento, datosChat)
+        //registramos el usuario en el documento del chat
+        const usrDoc = doc(database,`${chatcode}/datosChat/usrs/${auth.currentUser.uid}`)
+        setDoc(usrDoc,{'uid': auth.currentUser.uid})
         navigation.navigate("Chat",{chatcode: chatcode})
+
+
     }
 
     const SelectChat = () => {
@@ -41,9 +47,20 @@ export default function NewChat({navigation}) {
             if(querySnapshot.docs.length === 0){
                 Alert.alert("Error","Ingresa codigo valido")
             }else{
-                querySnapshot.docs.map(doc => {
-                    if(doc.data().codeChat === code){
+                querySnapshot.docs.map(docu => {
+                    if(docu.data().codeChat === code){
+                        console.log(docu.data());
+                        const ref = doc(database,`${code}/datosChat/usrs/${auth.currentUser.uid}`);
+                       
+                        setDoc(ref,{
+                            'uid':auth.currentUser.uid,
+                            
+                        });
+
+
                       navigation.navigate("Chat",{chatcode: code})
+
+                      //Registramos al usr en el chat
                     }
                   })
             }

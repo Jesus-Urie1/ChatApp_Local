@@ -1,14 +1,21 @@
 import React, { useEffect, useState} from 'react'
 import { database } from '../config/firebase'
-import { collection, onSnapshot, orderBy, query } from '@firebase/firestore'
+import { collection, onSnapshot, orderBy, query,doc, getDoc } from '@firebase/firestore'
 import ChatperfilComponent from '../components/ChatperfilComponent'
 import { Text, TouchableOpacity, StyleSheet, View } from "react-native";
+import { auth } from "../config/firebase";
 import { useNavigation } from '@react-navigation/native';
 
 export default function ChatPerfil(navigation) {
     const [products, setProducts] = useState([]);
     const navigationChat = useNavigation();
-    const chatcode = navigation.route.params.chatcode
+    const [usersInChat, setUsersInChat] = useState([]);
+    let usrs=[]
+    const chatcode = navigation.route.params.chatcode;
+    
+    for(var i=0; i<usersInChat.length; i++){
+      usrs.push(usersInChat[i].usr);
+    }
     
     useEffect(() => {
         const collectionRef = collection(database, chatcode);
@@ -25,12 +32,32 @@ export default function ChatPerfil(navigation) {
           )})
         return unsubscribe;
     },[])
+
+  useEffect(() => {
+    const collectionRef = collection(database,`${chatcode}/datosChat/usrs/`);
+    const q = query(collectionRef, orderBy('uid', 'desc'));
+    const unsubscribe = onSnapshot(q, querySnapshot => {
+      setUsersInChat(querySnapshot.docs.map(doc => {
+          
+          return{
+            usr: doc.data().uid
+          }
+        
+          }
+        )
+      )})
+    return unsubscribe;
+},[])
+
+
     return (
       <View style={styles.container}>
         {products.map(product => {
           if(product !== undefined)
-          return <ChatperfilComponent key={product.codechat} {...product}/>
+          return <ChatperfilComponent key={product.codechat} {...product} usersChat={usrs} />
+          
         })}
+        
           <TouchableOpacity style={styles.button} onPress={() => navigationChat.navigate("ChatPerfilEdit",{codechat: chatcode})}>
             <Text style={{fontWeight: 'bold', color: '#fff', fontSize: 18}}>Editar</Text>
           </TouchableOpacity>
