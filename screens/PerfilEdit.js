@@ -7,6 +7,7 @@ import { database } from "../config/firebase";
 import { useNavigation } from '@react-navigation/native';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword,updateProfile} from 'firebase/auth';
 import { auth } from "../config/firebase";
+import { getStorage, ref, uploadBytes,file, getMetadata } from "firebase/storage";
 
 
 export default function PerfilEdit(navigation){
@@ -16,6 +17,12 @@ export default function PerfilEdit(navigation){
     const [nombresend, setNombresend] = useState("");
     const [telefonosend, setTelefonosend] = useState("");
     const [imagensend, setImagensend] = useState(imgprincipal);
+
+    
+
+    
+
+
 
     const showImagePicker = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -29,6 +36,8 @@ export default function PerfilEdit(navigation){
     
         if (!result.cancelled) {
           setImagensend(result.uri);
+          console.log(result.uri);
+          
         }
       }
     const actulizar = () => {
@@ -51,10 +60,35 @@ export default function PerfilEdit(navigation){
                 })
             }
             if(imagensend !== imgprincipal){
-                const docRef = doc(database, "users", id);
-                updateDoc(docRef, {
-                    "imagen": imagensend,
+                const storage = getStorage();
+                const storageRef = ref(storage,'users/'+imagensend);
+
+                getMetadata(storageRef)
+                .then((metadata) => {
+                    console.log(metadata);
+                    // Metadata now contains the metadata for 'images/forest.jpg'
                 })
+                .catch((error) => {
+                    console.log(error);
+                    // Uh-oh, an error occurred!
+                });
+                
+                /*const metadata = {
+                    contentType: 'image/jpeg',
+                  };
+
+                // 'file' comes from the Blob or File API
+                uploadBytes(storageRef,imagensend,metadata).then((snapshot) => {
+                console.log('Uploaded foto');
+                
+                });*/
+
+
+                /*const docRef = doc(database, "users", id);
+                updateDoc(docRef, {
+
+                    "imagen": imagensend,
+                })*/
             }
             navigationBack.goBack();
         }
