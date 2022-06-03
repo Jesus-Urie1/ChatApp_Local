@@ -41,7 +41,7 @@ export default function NewChat({navigation}) {
             "imagenChat": imagenPrincipal,
         }
         setDoc(documento, datosChat)
-        const usrDoc = doc(database,`users/${idpass}/chats/${chatcode}`)
+        const usrDoc = doc(database,`users/${user.email}/chats/${chatcode}`)
         setDoc(usrDoc,{'chat': chatcode})
         const usrChat = doc(database,`${chatcode}/datosChat/usrs/${user.uid}`)
         setDoc(usrChat,{'uid': user.uid})

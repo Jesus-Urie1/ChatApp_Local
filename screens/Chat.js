@@ -1,14 +1,14 @@
 import React,{useState, useEffect, useContext, useRef} from "react";
 import {StyleSheet, View,ScrollView, TouchableOpacity} from "react-native";
 import Teclado from "../components/teclado";
-import { map } from "lodash";
+import { map, update } from "lodash";
 import Mensaje from "../components/mensaje";
 import moment from "moment";
 import AuthenticatedUserContext from "../components/context";
 import { useNavigation } from '@react-navigation/native';
 import Entyop from '@expo/vector-icons/Entypo'
 import { database} from "../config/firebase";
-import { collection, onSnapshot, orderBy, query, addDoc} from '@firebase/firestore'
+import { collection, onSnapshot, orderBy, query, addDoc,doc, updateDoc} from '@firebase/firestore'
 
 export default function Chat(navigation){
   const chatScrollR = useRef();
@@ -87,7 +87,12 @@ const sendMsj = (msj) => {
       "iduser": iduser,
       "usuarioname": usuario
     }
+    const ultimosDatos = {
+      "ultimoTexto": msj,
+      "ultimoTiempo": time,
+    }
     addDoc(collection(database, chatcode), datos);
+    updateDoc(doc(database, `${chatcode}/datosChat`),ultimosDatos);
   }
   
   return(

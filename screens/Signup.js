@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View, TextInput, SafeAreaView, ImageBackground, TouchableOpacity, Alert, KeyboardAvoidingView } from "react-native";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, database} from "../config/firebase";
-import { collection,addDoc } from "@firebase/firestore";
+import { collection, addDoc, setDoc, doc} from "@firebase/firestore";
 const backImage = require("../assets/backImage.png");
 
 export default function Signup({navigation}) {
@@ -33,7 +33,9 @@ export default function Signup({navigation}) {
                 "telefono": telefono,
                 "email": email,
             }
-            addDoc(collection(database, "users"), datos);
+            /*addDoc(collection(database, "users"), datos);*/
+            setDoc(doc(database, "users", email), datos)
+
         } 
     }
     

@@ -6,26 +6,26 @@ import { collection, onSnapshot, orderBy, query, doc, updateDoc} from '@firebase
 import { database } from '../config/firebase'
 
 
-
-
-const Item = ({ datosChat }) => (
-    <TouchableOpacity style={styles.item}>
-        <Image
-            style={styles.imagen}
-            source={{uri: datosChat.url}}
-            width= {70}
-            height={70}
-        />
-      <Text style={styles.title}>{datosChat.title}</Text>
-      <Text style={styles.msj}>{datosChat.msj}</Text>
-      <Text style={styles.hora}>{datosChat.hora}</Text>
-    </TouchableOpacity>
-  );
-
 export default function Home({navigation}) {
     const {user} = useContext(AuthenticatedUserContext);
     const [chats, setChats] = useState([]);
+    const [chatsId, setChatsId] = useState([]);
+    
+    const Item = ({ datosChat }) => (
+      <TouchableOpacity style={styles.item} onPress={() => navigation.navigate("Chat",{chatcode: datosChat.codeChat})}>
+          <Image
+              style={styles.imagen}
+              source={{uri: datosChat.imagenChat}}
+              width= {70}
+              height={70}
+          />
+        <Text style={styles.title}>{datosChat.nombreChat}</Text>
+        <Text style={styles.msj}>{datosChat.ultimoTexto}</Text>
+        <Text style={styles.hora}>{datosChat.ultimoTiempo}</Text>
+      </TouchableOpacity>
+    );
     let DATA = []
+
     useEffect(() => {
         const collectionRef = collection(database, "users");
         const q = query(collectionRef, orderBy('email', 'desc'));
@@ -39,28 +39,35 @@ export default function Home({navigation}) {
               }
             })
           })
-          mostrarChats("Khcktz")
+          getChatsId()
+          mostrarChats()
     },[])
     
-    function mostrarChats(codeChat){
-        const collectionRef = collection(database, codeChat);
-        const q = query(collectionRef, orderBy('codeChat', 'desc'));
-        onSnapshot(q, querySnapshot => {
-        setChats(querySnapshot.docs.map(doc => {
-                return {
-                  codechat: doc.data().codeChat,
-                  title: doc.data().nombreChat,
-                  url: doc.data().imagenChat,
-                  msj: 'Primer mensaje',
-                  hora: '01:15 pm',
-                }
-            }))
-          })
+    function mostrarChats(){
+        chatsId.map((chat) => {
+          const collectionRef = collection(database, chat.chats);
+          const q = query(collectionRef, orderBy('codeChat', 'desc'));
+          onSnapshot(q, querySnapshot => {
+          setChats(querySnapshot.docs.map(doc => {
+                  DATA.unshift(doc.data())
+                  return DATA
+              }))
+            })
+        })
     }
-
    
-    console.log(DATA, "=> DATA")
-    console.log(chats,"=> chats")
+    function getChatsId(){
+      const collectionRef = collection(database, `users/${user.email}/chats`);
+      const q = query(collectionRef, orderBy('chat', 'desc'));
+      onSnapshot(q, querySnapshot => {
+      setChatsId(querySnapshot.docs.map(doc => {
+              return {
+                chats:doc.data().chat
+              }
+          }))
+        })
+    }
+      
     useEffect(() => {
         const collectionRef = collection(database, "users");
         const q = query(collectionRef, orderBy('email', 'desc'));
@@ -74,6 +81,7 @@ export default function Home({navigation}) {
           })
         return unsubscribe;
     },[])
+
     useEffect(() => {
         navigation.setOptions({
             headerLeft: () => (
@@ -92,12 +100,14 @@ export default function Home({navigation}) {
     const renderItem = ({ item }) => (
         <Item datosChat={item} />
       );
+    console.log(chats[0],"=> chats")
+    
     return (
         <SafeAreaView style={styles.container}>
                 <FlatList
-                data={chats}
+                data={chats[0]}
                 renderItem={renderItem}
-                keyExtractor={item => item.codechat}/>
+                keyExtractor={item => item.codeChat}/>
         </SafeAreaView>   
         );
 }
