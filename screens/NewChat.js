@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Text, StyleSheet, View, TextInput, TouchableOpacity, SafeAreaView, Alert, KeyboardAvoidingView} from 'react-native'
 import { database } from "../config/firebase";
 import { doc, setDoc, collection, onSnapshot, orderBy, query } from '@firebase/firestore'
+import AuthenticatedUserContext from "../components/context";
 
 export default function NewChat({navigation}) {
     const [code, setcode] = useState("");
+    const {user} = useContext(AuthenticatedUserContext);
     const imagenPrincipal = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Antu_insert-image.svg/1200px-Antu_insert-image.svg.png";
+    const [idpass, setIdpass] = useState("");
     const cadenaAleatoria = longitud => {
         const banco = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         let aleatoria = "";
@@ -17,6 +20,19 @@ export default function NewChat({navigation}) {
     };
     const chatcode = cadenaAleatoria(6);
 
+    useEffect(() => {
+        const collectionRef = collection(database, "users");
+        const q = query(collectionRef, orderBy('email', 'desc'));
+        const unsubscribe = onSnapshot(q, querySnapshot => {
+            querySnapshot.docs.map(doc => {
+              if (doc.data().email === user.email){
+                setIdpass(doc.id)
+              }
+            })
+          })
+        return unsubscribe;
+    },[])
+
     const CreateChat = () => {
         const documento = doc(database, chatcode, "datosChat")
         const datosChat = {
@@ -24,7 +40,11 @@ export default function NewChat({navigation}) {
             "nombreChat": "nombre del chat",
             "imagenChat": imagenPrincipal,
         }
-        setDoc(documento, datosChat),
+        setDoc(documento, datosChat)
+        const usrDoc = doc(database,`users/${idpass}/chats/${chatcode}`)
+        setDoc(usrDoc,{'chat': chatcode})
+        const usrChat = doc(database,`${chatcode}/datosChat/usrs/${user.uid}`)
+        setDoc(usrChat,{'uid': user.uid})
         navigation.navigate("Chat",{chatcode: chatcode})
     }
 
@@ -39,9 +59,11 @@ export default function NewChat({navigation}) {
             if(querySnapshot.docs.length === 0){
                 Alert.alert("Error","Ingresa codigo valido")
             }else{
-                querySnapshot.docs.map(doc => {
-                    if(doc.data().codeChat === code){
-                      navigation.navigate("Chat",{chatcode: code})
+                querySnapshot.docs.map(docs => {
+                    if(docs.data().codeChat === code){
+                        const usrDoc = doc(database,`users/${idpass}/chats/${code}`)
+                        setDoc(usrDoc,{'chat': code})
+                        navigation.navigate("Chat",{chatcode: code})
                     }
                   })
             }

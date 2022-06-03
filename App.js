@@ -30,7 +30,7 @@ const AuthenticatedUserProvider = ({ children }) => {
 function ChatStack () {
   return (
     <Stack.Navigator defaultScreenOptions={Home}>
-      <Stack.Screen name="Home" component={Home} options={{ title:''}}/>
+      <Stack.Screen name="Home" component={Home} options={{ title:'Chats'}}/>
       <Stack.Screen name="Profile" component={Profile} options={{ title:'Perfil'}}/>
       <Stack.Screen name="PerfilEdit" component={PerfilEdit} options={{ title:'Editar Perfil'}}/>
       <Stack.Screen name="NewChat" component={NewChat} options={{ title:''}}/>

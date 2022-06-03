@@ -18,7 +18,7 @@ export default function PerfilEdit(navigation){
     const [imagensend, setImagensend] = useState(imgprincipal);
 
 
-    async function uploadImageAsync(uri){
+    async function uploadImageAsync(uri){ 
         const blob = await new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             xhr.onload = function() {

@@ -4,11 +4,27 @@ import { collection, onSnapshot, orderBy, query } from '@firebase/firestore'
 import PerfilComp from '../components/PerfilComp'
 import AuthenticatedUserContext from "../components/context";
 import { Text, TouchableOpacity, StyleSheet, View } from "react-native";
+import { signOut } from 'firebase/auth';
+import { auth } from '../config/firebase';
+import Entyop from '@expo/vector-icons/Entypo'
 
 export default function Profile({navigation}) {
     const {user} = useContext(AuthenticatedUserContext);
     const [products, setProducts] = useState([]);
     const [idpass, setIdpass] = useState("");
+    const onSignOut = () => {
+      signOut(auth).catch(error => console.log(error));
+    };
+    useEffect(() => {
+      navigation.setOptions({
+          headerRight: () => (
+            <TouchableOpacity style={{ marginLeft: 15}} onPress={onSignOut} >
+              <Entyop name="log-out" size={24} style={{color: '#006B76', marginRight: 10}}/>
+            </TouchableOpacity>
+          ),
+      });
+    }, [navigation]);
+
     useEffect(() => {
         const collectionRef = collection(database, "users");
         const q = query(collectionRef, orderBy('email', 'desc'));
@@ -30,6 +46,7 @@ export default function Profile({navigation}) {
           )})
         return unsubscribe;
     },[])
+    console.log(products)
     return (
       <View style={styles.container}>
         {products.map(product => {
