@@ -22,6 +22,7 @@ export default function teclado(props){
             <TextInput
                 placeholder="Enviar mensaje..."
                 placeholderTextColor='grey'
+                style={styles.teclado}
                 value={mensaje}
                 onChange={(e) => setMensaje(e.nativeEvent.text)}
             />

@@ -1,12 +1,16 @@
-import React, { useEffect, useState} from 'react'
+import React, { useEffect, useState, useContext} from 'react'
 import { database } from '../config/firebase'
 import { collection, onSnapshot, orderBy, query } from '@firebase/firestore'
 import ChatperfilComponent from '../components/ChatperfilComponent'
-import { Text, TouchableOpacity, StyleSheet, View } from "react-native";
+import { Text, TouchableOpacity, StyleSheet, View, Alert} from "react-native";
 import { useNavigation } from '@react-navigation/native';
+import AuthenticatedUserContext from "../components/context";
+import { deleteDoc, doc} from '@firebase/firestore'
+import Entyop from '@expo/vector-icons/Entypo'
 
 export default function ChatPerdil(navigation) {
     const [products, setProducts] = useState([]);
+    const { user } = useContext(AuthenticatedUserContext);
     const navigationChat = useNavigation();
     const chatcode = navigation.route.params.chatcode
     
@@ -25,6 +29,32 @@ export default function ChatPerdil(navigation) {
           )})
         return unsubscribe;
     },[])
+
+    function salirChat(code){
+      Alert.alert(
+        "Abandonar Chat",
+        "¿Seguro que deseas salir?",
+        [
+          {
+            text: "Cancelar",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+          },
+          { text: "Si", onPress: () => {deleteDoc(doc(database, "users", user.email,"chats",code));
+          navigationChat.reset({index: 0, routes: [{name: "Home"}]})} }
+        ]
+      );
+      
+    }
+    useEffect(() => {
+      navigationChat.setOptions({
+        headerRight: () => (
+          <TouchableOpacity onPress={() => salirChat(chatcode)} style={styles.chatButton}>
+            <Entyop name="log-out" size={24} style={{ color: '#006B76', paddingRight: 5 }} />
+          </TouchableOpacity>
+        ),
+      });
+    }, [navigationChat]);
     return (
       <View style={styles.container}>
         {products.map(product => {

@@ -65,7 +65,7 @@ useEffect(()=>{
 useEffect(() => {
     navigationChat.setOptions({
         headerLeft: () => (
-            <TouchableOpacity onPress={() => navigationChat.navigate("Home")} style={styles.perfilButton}>
+            <TouchableOpacity onPress={() => navigationChat.reset({index: 0, routes: [{name: "Home"}]})} style={styles.perfilButton}>
                 <Entyop name="home" size={24} style={{color: '#006B76'}}/>
             </TouchableOpacity>
         ),

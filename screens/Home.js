@@ -1,10 +1,11 @@
 import React, { useEffect, useContext, useState } from 'react'
-import { TouchableOpacity, Text, Image, StyleSheet, FlatList, SafeAreaView, StatusBar } from "react-native"
+import { TouchableOpacity, Text, Image, StyleSheet, FlatList, SafeAreaView, LogBox } from "react-native"
 import Entyop from '@expo/vector-icons/Entypo'
 import AuthenticatedUserContext from "../components/context";
 import { collection, onSnapshot, orderBy, query, doc, updateDoc, getDoc} from '@firebase/firestore'
 import { database } from '../config/firebase'
 
+LogBox.ignoreAllLogs();
 
 export default function Home({ navigation }) {
   const { user } = useContext(AuthenticatedUserContext);
@@ -103,10 +104,17 @@ export default function Home({ navigation }) {
   );
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
+      {chats.length > 0 ? <FlatList
         data={chats}
         renderItem={renderItem}
-        keyExtractor={item => item.codeChat} />
+        keyExtractor={item => item.codeChat} /> 
+        :
+        <Text style={styles.inicio}>{"Sin Chats"}</Text>
+      
+      }
+      
+      
+      
     </SafeAreaView>
   );
 }
@@ -115,6 +123,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+  },
+  inicio:{
+    textAlign: 'center',
+    paddingTop: 225,
+    color: '#1e272e',
+    fontSize: 30,
+    color: "#006B76",
+    fontWeight: 'bold',
   },
   chatButton: {
     height: 50,
@@ -135,6 +151,8 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     flexDirection: 'row',
     backgroundColor: '#FFFFFF',
+    borderBottomColor: "grey",
+    borderBottomWidth: .3,
     paddingBottomg: 15,
     paddingTop: 15,
     paddingStart: 3,
@@ -161,6 +179,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 10,
     left: 80,
+    fontSize: 15,
     fontStyle: 'italic',
   },
   imagen: {
